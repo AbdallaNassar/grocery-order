@@ -2,6 +2,9 @@
 const CART_KEY = 'grocery_cart_v1';
 const N8N_WEBHOOK_URL = 'https://gokimol212.app.n8n.cloud/webhook-test/grocery-order';
 
+// المتغير العام للمنتجات
+let products = [];
+
 // دوال مساعدة
 function $(sel) { return document.querySelector(sel); }
 
