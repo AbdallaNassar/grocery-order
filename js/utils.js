@@ -31,6 +31,18 @@ function updateCartButton() {
 function showMainPage() {
     $('#cartPage').classList.add('hidden');
     $('#mainPage').classList.remove('hidden');
+        // 🔹 اخفاء نتيجة الطلب
+    const resultBox = document.getElementById('orderResult');
+    if (resultBox) {
+        resultBox.classList.add('hidden');
+        resultBox.innerHTML = '';
+    }
+
+    // 🔹 Reset للفورم
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) {
+        checkoutForm.reset();
+    }
 }
 
 function showCartPage() {
@@ -46,3 +58,10 @@ function addLoadingStyles() {
     const styles = document.createElement('style');
     document.head.appendChild(styles);
 }
+window.addEventListener('load', () => {
+    const resultBox = document.getElementById('orderResult');
+    if (resultBox) {
+        resultBox.classList.add('hidden');
+        resultBox.innerHTML = '';
+    }
+});
