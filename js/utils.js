@@ -4,6 +4,7 @@ const N8N_WEBHOOK_URL = 'https://gokimol212.app.n8n.cloud/webhook-test/grocery-o
 
 // المتغير العام للمنتجات
 let products = [];
+let isLoading = false;
 
 // دوال مساعدة
 function $(sel) { return document.querySelector(sel); }
@@ -36,4 +37,12 @@ function showCartPage() {
     $('#mainPage').classList.add('hidden');
     $('#cartPage').classList.remove('hidden');
     renderCartItems();
+}
+
+// إضافة الـ CSS للـ Loading States
+function addLoadingStyles() {
+    if (document.getElementById('loading-styles')) return;
+    
+    const styles = document.createElement('style');
+    document.head.appendChild(styles);
 }

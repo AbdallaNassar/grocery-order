@@ -3,12 +3,14 @@ async function loadProducts() {
     try {
         console.log('🚀 بدء تحميل التطبيق...');
         
-        // تحميل المنتجات
+        // إضافة الـ Loading Styles
+        addLoadingStyles();
+        
+        // إظهار loading وتحميل البيانات من الخادم
         await fetchProductsFromSheets();
         
-        // عرض الفئات والمنتجات
-        renderCategories();
-        renderProducts(products);
+        // تحديث زر العربة
+        updateCartButton();
         
         console.log('✅ تم تحميل التطبيق بنجاح');
         
@@ -21,15 +23,25 @@ async function loadProducts() {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('📱 تهيئة التطبيق...');
     
-    // تحميل المنتجات
+    // تحميل المنتجات من الخادم
     await loadProducts();
-    
-    // تحديث زر العربة
-    updateCartButton();
 
     // إعداد أحداث البحث والفلترة
-    $('#search').addEventListener('input', filterProducts);
-    $('#categoryFilter').addEventListener('change', filterProducts);
+    const searchInput = $('#search');
+    const categoryFilter = $('#categoryFilter');
+    
+    if (searchInput) {
+        // استخدام debounce للبحث لتحسين الأداء
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(filterProducts, 300);
+        });
+    }
+    
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', filterProducts);
+    }
 
     // إعداد نموذج الطلب
     const checkoutForm = $('#checkoutForm');
@@ -41,5 +53,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
     
-    console.log('✅ تم تهيئة التطبيق بنجاح');
+    console.log('🚀 التطبيق جاهز!');
 });
