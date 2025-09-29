@@ -125,8 +125,22 @@ async function submitOrder(formData) {
         return;
     }
 
+    // رقم طلب عشوائي
+    const orderId = Math.random().toString(36).substr(2, 9);
+
+    // تحويل الوقت لشكل 12 ساعة مع AM/PM
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${hours}:${minutes} ${ampm}`;
+
     const order = {
-        date: new Date().toISOString(),
+        orderId,
+        date: now.toISOString(),
+        formattedDate,
         customer: {
             name: formData.get('name'),
             address: formData.get('address'),
@@ -144,24 +158,31 @@ async function submitOrder(formData) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(order)
         });
-        
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        
+
         const data = await res.json().catch(() => ({ success: true }));
+
         console.log('✅ تم إرسال الطلب بنجاح:', data);
 
         // مسح العربة
         localStorage.removeItem(CART_KEY);
         $('#orderResult').classList.remove('hidden');
-        $('#orderResult').innerHTML = `<p>✅ تم إرسال الطلب بنجاح. رقم الطلب: ${data.orderId || Math.random().toString(36).substr(2, 9)}</p>`;
+        $('#orderResult').innerHTML = `
+            <p>✅ تم إرسال الطلب بنجاح.</p>
+            <p>رقم الطلب: <strong>${orderId}</strong></p>
+            <p>تاريخ الطلب: ${formattedDate}</p>
+        `;
         $('#checkoutForm').reset();
         renderCartItems();
         updateCartButton();
-        
+
         showNotification('تم إرسال الطلب بنجاح! ✅');
-        
+
     } catch (err) {
         console.error('❌ خطأ في إرسال الطلب:', err);
         alert('حدث خطأ أثناء إرسال الطلب: ' + err.message);
     }
 }
+
+
