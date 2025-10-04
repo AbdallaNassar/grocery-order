@@ -1,6 +1,6 @@
 // دوال مساعدة عامة
-const CART_KEY = 'grocery_cart_v1';
 const N8N_WEBHOOK_URL = 'https://n8n.abdallav2ray.ggff.net/webhook/order';
+const CART_KEY = 'grocery_cart_v1';
 
 // المتغير العام للمنتجات
 let products = [];
