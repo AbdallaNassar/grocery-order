@@ -12,7 +12,7 @@ async function fetchProductsFromSheets() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 ثانية timeout
         
-        const response = await fetch('https://gokimol212.app.n8n.cloud/webhook/get-products', {
+        const response = await fetch('https://n8n.abdallav2ray.ggff.net/webhook/get-products', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
