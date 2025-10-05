@@ -1,83 +1,62 @@
+const N8N_WEBHOOK_URL_GET = 'https://n8n.abdallav2ray.ggff.net/webhook/get-products';
 // تحميل المنتجات من Google Sheets فقط
 async function fetchProductsFromSheets() {
-    try {
-        console.log('🔄 بدء تحميل المنتجات من الخادم...');
-        isLoading = true;
-        
-        // إظهار loading أثناء التحميل
-        showProductSkeletons();
-        
-        console.log('🌐 الاتصال بـ API...');
-        
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 ثانية timeout
-        
-        const response = await fetch('https://n8n.abdallav2ray.ggff.net/webhook/get-products', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            signal: controller.signal
-        });
+  try {
+    console.log('🔄 بدء تحميل المنتجات من الخادم...');
+    isLoading = true;
+    showProductSkeletons();
 
-        clearTimeout(timeoutId);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-        if (!response.ok) {
-            throw new Error(`خطأ في الخادم: ${response.status} - ${response.statusText}`);
-        }
+    const response = await fetch(N8N_WEBHOOK_URL_GET, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic ' + btoa(AUTH_HEADER),
+      },
+      mode: 'cors',
+      signal: controller.signal,
+    });
 
-        const data = await response.json();
-        console.log('📦 البيانات المستلمة من API:', data);
+    clearTimeout(timeoutId);
 
-        // تأكد إن البيانات في الصيغة الصحيحة
-        if (!data) {
-            throw new Error('لم يتم استلام أي بيانات من الخادم');
-        }
+    console.log('HTTP Status:', response.status);
+    if (!response.ok) throw new Error(`خطأ في الخادم: ${response.status} - ${response.statusText}`);
 
-        if (!Array.isArray(data)) {
-            throw new Error('البيانات المستلمة ليست في الصيغة المطلوبة');
-        }
+    const resData = await response.json();
+    console.log('📦 البيانات المستلمة من API:', resData);
 
-        if (data.length === 0) {
-            throw new Error('لا توجد منتجات في قاعدة البيانات');
-        }
+    // جرب استخراج المصفوفة الصحيحة من الرد
+    const data = Array.isArray(resData)
+      ? resData
+      : resData.data || resData.items || [];
 
-        // حول البيانات وتأكد من التنسيق الصحيح
-        products = data.map((item, index) => ({
-            sku: String(item.sku || item.id || `auto_${index}`),
-            name: String(item.name || item.product_name || `منتج ${index + 1}`),
-            category: String(item.category || 'عام'),
-            price: Number(item.price || 0),
-            image: String(item.image || item.image_url || `https://via.placeholder.com/300x200/667eea/white?text=${encodeURIComponent(item.name || 'منتج')}`)
-        })).filter(item => item.name && item.price > 0); // فقط المنتجات الصالحة
-
-        if (products.length === 0) {
-            throw new Error('لا توجد منتجات صالحة في البيانات المستلمة');
-        }
-
-        console.log('✅ تم تحميل المنتجات بنجاح:', products.length);
-        
-        // عرض المنتجات
-        renderCategories();
-        renderProducts(products);
-        showSuccessMessage(`تم تحميل ${products.length} منتج بنجاح ✅`);
-        
-        return products;
-
-    } catch (error) {
-        console.error('❌ خطأ في تحميل المنتجات:', error);
-        
-        // عرض رسالة خطأ مفصلة
-        showErrorMessage(error);
-        
-        // إرجاع مصفوفة فارغة
-        products = [];
-        return products;
-        
-    } finally {
-        isLoading = false;
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new Error('لم يتم العثور على منتجات');
     }
+
+    products = data.map((item, index) => ({
+      sku: String(item.sku || item.id || `auto_${index}`),
+      name: String(item.name || item.product_name || `منتج ${index + 1}`),
+      category: String(item.category || 'عام'),
+      price: Number(item.price || 0),
+      image: String(item.image || item.image_url || `https://via.placeholder.com/300x200/667eea/white?text=${encodeURIComponent(item.name || 'منتج')}`)
+    })).filter(p => p.name && p.price > 0);
+
+    renderCategories();
+    renderProducts(products);
+    showSuccessMessage(`تم تحميل ${products.length} منتج بنجاح ✅`);
+
+  } catch (error) {
+    console.error('❌ خطأ في تحميل المنتجات:', error);
+    showErrorMessage(error);
+    products = [];
+  } finally {
+    isLoading = false;
+  }
 }
+
 
 // إظهار رسالة خطأ مفصلة
 function showErrorMessage(error) {
