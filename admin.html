@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة التحكم - إدارة الطلبات</title>
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body>
+    <!-- Login Page -->
+    <div class="login-container" id="loginPage">
+      <div class="login-box">
+        <h1>🔐 تسجيل الدخول</h1>
+        <input type="email" id="loginEmail" placeholder="البريد الإلكتروني" />
+        <input type="password" id="loginPassword" placeholder="كلمة المرور" />
+        <button onclick="login()">دخول</button>
+        <div class="error" id="loginError"></div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboardPage">
+      <div class="header">
+        <h1>📊 لوحة التحكم - إدارة الطلبات</h1>
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+      </div>
+
+      <div class="container">
+        <!-- Statistics -->
+        <div class="stats">
+          <div class="stat-card">
+            <h3>إجمالي الطلبات</h3>
+            <div class="number" id="totalOrders">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>قيد الانتظار</h3>
+            <div class="number" id="pendingOrders" style="color: #fdcb6e">
+              0
+            </div>
+          </div>
+          <div class="stat-card">
+            <h3>مقبولة</h3>
+            <div class="number" id="acceptedOrders" style="color: #00b894">
+              0
+            </div>
+          </div>
+          <div class="stat-card">
+            <h3>مرفوضة</h3>
+            <div class="number" id="rejectedOrders" style="color: #d63031">
+              0
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 بحث برقم الطلب أو اسم العميل..."
+          />
+          <select id="statusFilter">
+            <option value="">كل الحالات</option>
+            <option value="Pending">قيد الانتظار</option>
+            <option value="Accepted">مقبولة</option>
+            <option value="Rejected">مرفوضة</option>
+          </select>
+          <button class="action-btn view-btn" onclick="loadOrders()">
+            🔄 تحديث
+          </button>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-table">
+          <table>
+            <thead>
+              <tr>
+                <th>رقم الطلب</th>
+                <th>العميل</th>
+                <th>الهاتف</th>
+                <th>الإجمالي</th>
+                <th>التاريخ</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr>
+                <td colspan="7" class="loading">جاري التحميل...</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal" id="orderModal">
+      <div class="modal-content">
+        <h2>تفاصيل الطلب</h2>
+        <div id="orderDetails"></div>
+        <div class="modal-actions">
+          <button class="close-modal action-btn" onclick="closeModal()">
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+  </body>
+</html>
