@@ -109,6 +109,25 @@
       </div>
     </div>
 
+    <!-- Modal لإدخال سبب الرفض أو وقت التوصيل -->
+    <div class="modal" id="inputModal">
+      <div class="modal-content">
+        <h2 id="inputModalTitle">إدخال البيانات</h2>
+        <input
+          type="text"
+          id="inputModalField"
+          placeholder="أدخل القيمة هنا..."
+        />
+        <div class="modal-actions">
+          <button class="action-btn accept-btn" onclick="confirmInput()">
+            تأكيد
+          </button>
+          <button class="action-btn reject-btn" onclick="closeInputModal()">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
     <script src="js/admin.js"></script>
   </body>
 </html>
