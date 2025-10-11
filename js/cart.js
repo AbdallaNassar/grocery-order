@@ -71,7 +71,7 @@ function renderCartItems() {
   if (cart.length === 0) {
     container.innerHTML =
       '<p style="text-align:center;padding:2rem;background:white;border-radius:8px;">العربة فارغة</p>';
-    $("#cartTotal").textContent = "المجموع: 0 ج";
+    $("#cartTotal").textContent = "المجموع: 0 ريال";
     return;
   }
 
@@ -91,7 +91,7 @@ function renderCartItems() {
       <div>
         <div style="margin-bottom:0.5rem;">المجموع: ${
           item.price * item.qty
-        } ج</div>
+        } ريال</div>
         <button onclick="removeFromCart('${item.sku}')">حذف</button>
       </div>
     `;
@@ -99,7 +99,7 @@ function renderCartItems() {
   });
 
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  $("#cartTotal").textContent = `المجموع: ${total} ج`;
+  $("#cartTotal").textContent = `المجموع: ${total} ريال`;
 }
 
 function updateQty(sku, qty) {
@@ -188,7 +188,7 @@ async function submitOrder(formData) {
       <p>✅ تم إرسال الطلب بنجاح.</p>
       <p>رقم الطلب: <strong>${orderId}</strong></p>
       <p>تاريخ الطلب: ${formattedDate}</p>
-      <p>الإجمالي: <strong>${order.total} جنيه</strong></p>
+      <p>الإجمالي: <strong>${order.total} ريال</strong></p>
     `;
 
     $("#checkoutForm").reset();

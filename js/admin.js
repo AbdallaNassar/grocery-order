@@ -152,7 +152,7 @@ function renderOrders() {
             <td>${order.OrderID}</td>
             <td>${order.CustomerName}</td>
             <td>${order.Phone}</td>
-            <td><strong>${order.Total} ج</strong></td>
+            <td><strong>${order.Total} ريال</strong></td>
             <td>${order.Date}</td>
             <td><span class="status ${statusClass}">${getStatusText(
       order.Status
@@ -216,7 +216,7 @@ function renderOrders() {
             <td>${order.OrderID}</td>
             <td>${order.CustomerName}</td>
             <td>${order.Phone}</td>
-            <td><strong>${order.Total} ج</strong></td>
+            <td><strong>${order.Total} ريال</strong></td>
             <td>${order.Date}</td>
             <td><span class="status ${statusClass}">${getStatusText(
       order.Status
@@ -286,11 +286,11 @@ function viewOrder(orderId) {
             ${items
               .map(
                 (item) =>
-                  `• ${item.name} - الكمية: ${item.qty} - السعر: ${item.price} ج`
+                  `• ${item.name} - الكمية: ${item.qty} - السعر: ${item.price} ريال`
               )
               .join("<br>")}
         </div>
-        <div class="detail"><strong>الإجمالي:</strong> ${order.Total} ج</div>
+        <div class="detail"><strong>الإجمالي:</strong> ${order.Total} ريال</div>
     `;
 
   document.getElementById("orderDetails").innerHTML = details;
@@ -390,4 +390,13 @@ async function rejectOrder(orderId) {
       await updateOrderStatus(orderId, "Rejected", "", reason);
     }
   );
+}
+
+
+function goToDataEntry() {
+  if (sessionStorage.getItem("isLoggedIn") === "true") {
+    window.location.href = "data-entry.html";
+  } else {
+    alert("❌ يجب تسجيل الدخول أولاً");
+  }
 }

@@ -41,7 +41,7 @@ async function fetchProductsFromSheets() {
       name: String(item.name || item.product_name || `منتج ${index + 1}`),
       category: String(item.category || 'عام'),
       price: Number(item.price || 0),
-      image: String(item.image || item.image_url || `https://via.placeholder.com/300x200/667eea/white?text=${encodeURIComponent(item.name || 'منتج')}`)
+      image: String(item.image || item.image_url || `https://placehold.co/300x200?text=${encodeURIComponent(item.name || 'منتج')}`)
     })).filter(p => p.name && p.price > 0);
 
     renderCategories();
@@ -171,12 +171,12 @@ function renderProducts(list) {
         card.className = 'product';
         card.innerHTML = `
             <img src="${p.image}" alt="${p.name}" 
-                 onerror="this.src='https://via.placeholder.com/300x200/667eea/white?text=${encodeURIComponent(p.name)}'"
+                 onerror="this.src='https://placehold.co/300x200?text=${encodeURIComponent(p.name)}'"
                  loading="lazy">
             <h4>${p.name}</h4>
             <div class="meta">
                 <div>${p.category}</div>
-                <div>${p.price} ج</div>
+                <div>${p.price} ريال</div>
             </div>
             <button onclick="addToCart('${p.sku}')" data-sku="${p.sku}">أضف للعربة</button>
         `;
