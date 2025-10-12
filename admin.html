@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>لوحة التحكم - إدارة الطلبات</title>
     <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
   </head>
   <body>
     <!-- Login Page -->
@@ -80,12 +82,12 @@
           <table>
             <thead>
               <tr>
-                <th>رقم الطلب</th>
-                <th>العميل</th>
-                <th>الهاتف</th>
-                <th>الإجمالي</th>
-                <th>التاريخ</th>
-                <th>الحالة</th>
+                <th>🆔 رقم الطلب</th>
+                <th>👤 العميل</th>
+                <th>📱 الهاتف</th>
+                <th>💰 الإجمالي</th>
+                <th>📅 التاريخ</th>
+                <th>🎯 الحالة</th>
                 <th>الإجراءات</th>
               </tr>
             </thead>
@@ -104,19 +106,15 @@
     <!-- Order Details Modal -->
     <div class="modal" id="orderModal">
       <div class="modal-content">
-        <h2>تفاصيل الطلب</h2>
         <div id="orderDetails"></div>
         <div class="modal-actions">
-          <button class="close-modal action-btn" onclick="closeModal()">
-            إغلاق
-          </button>
         </div>
       </div>
     </div>
 
     <!-- Modal لإدخال سبب الرفض أو وقت التوصيل -->
     <div class="modal" id="inputModal">
-      <div class="modal-content">
+      <div class="modal-content-accept-reject">
         <h2 id="inputModalTitle">إدخال البيانات</h2>
         <input
           type="text"
@@ -134,5 +132,7 @@
       </div>
     </div>
     <script src="js/admin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
   </body>
 </html>

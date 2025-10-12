@@ -1,5 +1,6 @@
 const N8N_WEBHOOK_URL_POST = 'https://n8n.abdallav2ray.ggff.net/webhook/order';
 const AUTH_HEADER = 'client:Abdallasuper2025samysuper';
+
 // إدارة العربة
 function addToCart(sku) {
   console.log("🛒 محاولة إضافة منتج:", sku);
@@ -120,7 +121,7 @@ function removeFromCart(sku) {
   showNotification("تم حذف المنتج من العربة ❌");
 }
 
-// 🔐 إرسال الطلب - مع التأمين
+// 🔐 إرسال الطلب - مع التأمين و GPS
 async function submitOrder(formData) {
   const cart = loadCart();
   if (cart.length === 0) {
@@ -139,14 +140,50 @@ async function submitOrder(formData) {
     now.getMonth() + 1
   }/${now.getFullYear()} ${hours}:${minutes} ${ampm}`;
 
+  // ✅ استخراج بيانات GPS من input الموقع
+  let locationData = null;
+  const addressInput = document.querySelector('input[name="address"]');
+  
+  if (addressInput && addressInput.dataset.gpsLocation) {
+    try {
+      // البيانات محفوظة كـ JSON كامل في dataset
+      locationData = JSON.parse(addressInput.dataset.gpsLocation);
+      console.log('📍 بيانات GPS المرسلة:', locationData);
+    } catch (e) {
+      console.warn('⚠️ خطأ في قراءة بيانات GPS من input');
+    }
+  }
+
   const order = {
     orderId,
     date: now.toISOString(),
     formattedDate,
     customer: {
       name: formData.get("name"),
-      address: formData.get("address"),
       phone: formData.get("phone"),
+      addressInput: formData.get("address"), // العنوان المدخل من المستخدم
+      
+      // 📍 بيانات الموقع المنظمة بشكل JSON كامل
+      location: locationData ? {
+        type: locationData.type || "Point",
+        coordinates: {
+          latitude: locationData.coordinates[1],
+          longitude: locationData.coordinates[0],
+          formatted: `${locationData.coordinates[1].toFixed(6)}, ${locationData.coordinates[0].toFixed(6)}`
+        },
+        accuracy: {
+          horizontal_meters: locationData.accuracy_meters,
+          altitude_meters: locationData.altitude_meters,
+          altitude_accuracy_meters: locationData.altitude_accuracy_meters
+        },
+        motion: {
+          heading_degrees: locationData.heading_degrees,
+          speed_kmh: locationData.speed_kmh
+        },
+        address: locationData.address,
+        timestamp: locationData.timestamp,
+        device_info: locationData.device_info
+      } : null
     },
     items: cart.map((i) => ({
       sku: i.sku,
@@ -158,15 +195,13 @@ async function submitOrder(formData) {
   };
 
   try {
-    console.log("📤 إرسال الطلب:", order);
+    console.log("📤 إرسال الطلب مع بيانات GPS كاملة:", order);
 
-    // ✅ الكود الصحيح - بدون Origin
     const res = await fetch(N8N_WEBHOOK_URL_POST, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: "Basic " + btoa(AUTH_HEADER),
-        // Origin يُرسل تلقائياً من البراوزر ✅
       },
       body: JSON.stringify(order),
     });
@@ -182,14 +217,34 @@ async function submitOrder(formData) {
     // مسح العربة
     localStorage.removeItem(CART_KEY);
 
-    // عرض رسالة النجاح
-    $("#orderResult").classList.remove("hidden");
-    $("#orderResult").innerHTML = `
+    // عرض رسالة النجاح مع معلومات الموقع
+    let successHtml = `
       <p>✅ تم إرسال الطلب بنجاح.</p>
       <p>رقم الطلب: <strong>${orderId}</strong></p>
       <p>تاريخ الطلب: ${formattedDate}</p>
       <p>الإجمالي: <strong>${order.total} ريال</strong></p>
     `;
+
+    // إضافة معلومات GPS إذا توفرت
+    if (locationData && locationData.coordinates) {
+      const mapLink = `https://maps.google.com/?q=${locationData.coordinates[1]},${locationData.coordinates[0]}`;
+      successHtml += `
+        <div style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 5px; text-align: right;">
+          <strong>📍 بيانات الموقع المرسلة:</strong>
+          <p style="margin: 0.5rem 0;"><strong>العنوان:</strong> ${locationData.address}</p>
+          <p style="margin: 0.5rem 0;"><strong>دقة التحديد:</strong> ±${locationData.accuracy_meters} متر</p>
+          <p style="margin: 0.5rem 0; direction: ltr; text-align: left; font-family: monospace; font-size: 12px;">
+            <strong>الإحداثيات:</strong> ${locationData.coordinates[1].toFixed(6)}, ${locationData.coordinates[0].toFixed(6)}
+          </p>
+          <a href="${mapLink}" target="_blank" style="color: #1976d2; text-decoration: none;">
+            🗺️ عرض على الخريطة →
+          </a>
+        </div>
+      `;
+    }
+
+    $("#orderResult").classList.remove("hidden");
+    $("#orderResult").innerHTML = successHtml;
 
     $("#checkoutForm").reset();
     renderCartItems();

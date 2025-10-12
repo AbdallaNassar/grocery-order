@@ -6,23 +6,20 @@ const CONFIG = {
 let allOrders = [];
 let currentOrder = null;
 
-// Login - يرسل للـ n8n للتحقق
+// Login
 async function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
   const error = document.getElementById("loginError");
 
-  // إخفاء رسالة الخطأ السابقة
   error.textContent = "";
 
-  // التحقق من ملء الحقول
   if (!email || !password) {
     error.textContent = "❌ يرجى ملء جميع الحقول";
     return;
   }
 
   try {
-    // إرسال بيانات التسجيل إلى n8n
     const response = await fetch(`${CONFIG.N8N_URL}/admin-login`, {
       method: "POST",
       headers: {
@@ -37,9 +34,7 @@ async function login() {
 
     const result = await response.json();
 
-    // التحقق من الاستجابة
     if (response.ok && result.success) {
-      // تسجيل دخول ناجح
       sessionStorage.setItem("isLoggedIn", "true");
       sessionStorage.setItem("adminEmail", email);
 
@@ -47,7 +42,6 @@ async function login() {
       document.getElementById("dashboardPage").classList.add("active");
       loadOrders();
     } else {
-      // فشل تسجيل الدخول
       error.textContent =
         result.message || "❌ البريد أو كلمة المرور غير صحيحة";
     }
@@ -57,23 +51,19 @@ async function login() {
   }
 }
 
-// Logout
 function logout() {
   sessionStorage.removeItem("isLoggedIn");
   sessionStorage.removeItem("adminEmail");
   location.reload();
 }
 
-// Check Login on Load
 window.onload = function () {
   if (sessionStorage.getItem("isLoggedIn") === "true") {
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("dashboardPage").classList.add("active");
     loadOrders();
   }
-  // 🔄 تحديث تلقائي كل 15 ثانية
   setInterval(loadOrders, 15000);
-  // Add event listeners for search and filter
   document
     .getElementById("searchInput")
     .addEventListener("input", renderOrders);
@@ -82,7 +72,6 @@ window.onload = function () {
     .addEventListener("change", renderOrders);
 };
 
-// Load Orders from n8n
 async function loadOrders() {
   try {
     const response = await fetch(`${CONFIG.N8N_URL}/get-orders`, {
@@ -90,14 +79,10 @@ async function loadOrders() {
         Authorization: `Basic ${CONFIG.AUTH_TOKEN}`,
       },
     });
-    console.log("HTTP Status:", response.status);
-
-    console.log(response);
 
     if (!response.ok) throw new Error("فشل تحميل الطلبات");
 
     const data = await response.json();
-    console.log("📦 البيانات المستلمة من API:", data);
     allOrders = Array.isArray(data) ? data : [data];
 
     updateStats();
@@ -108,7 +93,6 @@ async function loadOrders() {
   }
 }
 
-// Update Statistics
 function updateStats() {
   document.getElementById("totalOrders").textContent = allOrders.length;
   document.getElementById("pendingOrders").textContent = allOrders.filter(
@@ -122,60 +106,18 @@ function updateStats() {
   ).length;
 }
 
-// Render Orders Table
-function renderOrders() {
-  const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-  const statusFilter = document.getElementById("statusFilter").value;
-
-  let filtered = allOrders.filter((order) => {
-    const matchesSearch =
-      order.OrderID.toLowerCase().includes(searchTerm) ||
-      order.CustomerName.toLowerCase().includes(searchTerm);
-    const matchesStatus = !statusFilter || order.Status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
-
-  const tbody = document.getElementById("ordersTableBody");
-  tbody.innerHTML = "";
-
-  if (filtered.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="7" style="text-align:center;padding:40px;">لا توجد طلبات</td></tr>';
-    return;
+function parseLocation(locationJSON) {
+  try {
+    if (typeof locationJSON === "string") {
+      return JSON.parse(locationJSON);
+    }
+    return locationJSON;
+  } catch (e) {
+    console.error("خطأ في تحليل الموقع:", e);
+    return null;
   }
-
-  filtered.reverse().forEach((order) => {
-    const row = document.createElement("tr");
-    const statusClass = order.Status.toLowerCase();
-
-    row.innerHTML = `
-            <td>${order.OrderID}</td>
-            <td>${order.CustomerName}</td>
-            <td>${order.Phone}</td>
-            <td><strong>${order.Total} ريال</strong></td>
-            <td>${order.Date}</td>
-            <td><span class="status ${statusClass}">${getStatusText(
-      order.Status
-    )}</span></td>
-            <td>
-                <button class="action-btn view-btn" onclick="viewOrder('${
-                  order.OrderID
-                }')">عرض</button>
-                ${
-                  order.Status === "Pending"
-                    ? `
-                    <button class="action-btn accept-btn" onclick="acceptOrder('${order.OrderID}')">قبول</button>
-                    <button class="action-btn reject-btn" onclick="rejectOrder('${order.OrderID}')">رفض</button>
-                `
-                    : ""
-                }
-            </td>
-        `;
-    tbody.appendChild(row);
-  });
 }
 
-// ====== Pagination ======
 let currentPage = 1;
 const ordersPerPage = 15;
 
@@ -191,7 +133,6 @@ function renderOrders() {
     return matchesSearch && matchesStatus;
   });
 
-  // ترتيب الطلبات الجديدة أولاً
   filtered.reverse();
 
   const totalPages = Math.ceil(filtered.length / ordersPerPage);
@@ -204,7 +145,7 @@ function renderOrders() {
 
   if (paginatedOrders.length === 0) {
     tbody.innerHTML =
-      '<tr><td colspan="7" style="text-align:center;padding:40px;">لا توجد طلبات</td></tr>';
+      '<tr><td colspan="8" style="text-align:center;padding:40px;">لا توجد طلبات</td></tr>';
     document.getElementById("pagination").innerHTML = "";
     return;
   }
@@ -212,29 +153,26 @@ function renderOrders() {
   paginatedOrders.forEach((order) => {
     const row = document.createElement("tr");
     const statusClass = order.Status.toLowerCase();
+
     row.innerHTML = `
-            <td>${order.OrderID}</td>
-            <td>${order.CustomerName}</td>
-            <td>${order.Phone}</td>
-            <td><strong>${order.Total} ريال</strong></td>
-            <td>${order.Date}</td>
-            <td><span class="status ${statusClass}">${getStatusText(
-      order.Status
-    )}</span></td>
-            <td>
-                <button class="action-btn view-btn" onclick="viewOrder('${
-                  order.OrderID
-                }')">عرض</button>
-                ${
-                  order.Status === "Pending"
-                    ? `
-                    <button class="action-btn accept-btn" onclick="acceptOrder('${order.OrderID}')">قبول</button>
-                    <button class="action-btn reject-btn" onclick="rejectOrder('${order.OrderID}')">رفض</button>
-                `
-                    : ""
-                }
-            </td>
-        `;
+      <td>${order.OrderID}</td>
+      <td>${order.CustomerName}</td>
+      <td>${order.Phone}</td>
+      <td><strong>${order.Total} ريال</strong></td>
+      <td>${order.Date}</td>
+      <td><span class="status ${statusClass}">${getStatusText(order.Status)}</span></td>
+      <td>
+        <button class="action-btn view-btn" onclick="viewOrder('${order.OrderID}')">📋 عرض</button>
+        ${
+          order.Status === "Pending"
+            ? `
+            <button class="action-btn accept-btn" onclick="acceptOrder('${order.OrderID}')">✅ قبول</button>
+            <button class="action-btn reject-btn" onclick="rejectOrder('${order.OrderID}')">❌ رفض</button>
+          `
+            : ""
+        }
+      </td>
+    `;
     tbody.appendChild(row);
   });
 
@@ -259,49 +197,158 @@ function renderPagination(totalPages) {
     pagination.appendChild(btn);
   }
 }
-// ====== End Pagination ======
 
 function getStatusText(status) {
   const map = { Pending: "قيد الانتظار", Accepted: "مقبول", Rejected: "مرفوض" };
   return map[status] || status;
 }
 
-// View Order Details
+// View Order Details with Map
 function viewOrder(orderId) {
   const order = allOrders.find((o) => o.OrderID === orderId);
   if (!order) return;
 
   const items = JSON.parse(order.OrderJSON);
-  const details = `
-        <div class="detail"><strong>رقم الطلب:</strong> ${order.OrderID}</div>
-        <div class="detail"><strong>العميل:</strong> ${order.CustomerName}</div>
-        <div class="detail"><strong>الهاتف:</strong> ${order.Phone}</div>
-        <div class="detail"><strong>العنوان:</strong> ${order.Address}</div>
-        <div class="detail"><strong>التاريخ:</strong> ${order.Date}</div>
-        <div class="detail"><strong>الحالة:</strong> ${getStatusText(
-          order.Status
-        )}</div>
-        <div class="detail">
-            <strong>المنتجات:</strong><br>
-            ${items
-              .map(
-                (item) =>
-                  `• ${item.name} - الكمية: ${item.qty} - السعر: ${item.price} ريال`
-              )
-              .join("<br>")}
+  const location = parseLocation(order.Location);
+
+  const statusEmoji = {
+    Pending: "⏳",
+    Accepted: "✅",
+    Rejected: "❌"
+  };
+
+  let mapHTML = "";
+  if (location && location.coordinates) {
+    mapHTML = `
+      <div class="detail-section map-section">
+        <h3>📍 الموقع على الخريطة</h3>
+        <div id="orderMap" style="width:100%;height:300px;border-radius:8px;overflow:hidden;"></div>
+        <div class="location-info" style="margin-top:10px;padding:10px;background:#f0f0f0;border-radius:6px;">
+          <p style="margin:5px 0;"><strong>📌 العنوان:</strong> ${location.address}</p>
+          <p style="margin:5px 0;font-size:0.9em;color:#666;">
+            <strong>📐 الإحداثيات:</strong> ${location.coordinates.latitude.toFixed(4)}, ${location.coordinates.longitude.toFixed(4)}
+          </p>
         </div>
-        <div class="detail"><strong>الإجمالي:</strong> ${order.Total} ريال</div>
+      </div>
     `;
+  }
+
+  const details = `
+    <div class="order-modal-header">
+      <h2>📦 تفاصيل الطلب #${order.OrderID}</h2>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="order-modal-content">
+      <div class="details-grid">
+        <div class="detail-section">
+          <h3>👤 معلومات العميل</h3>
+          <div class="info-box">
+            <p><strong>👤 الاسم:</strong> ${order.CustomerName}</p>
+            <p><strong>📱 الهاتف:</strong> ${order.Phone}</p>
+            <p><strong>🏠 العنوان:</strong> ${order.Address}</p>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>📊 معلومات الطلب</h3>
+          <div class="info-box">
+            <p><strong>🆔 رقم الطلب:</strong> ${order.OrderID}</p>
+            <p><strong>📅 التاريخ:</strong> ${order.Date}</p>
+            <p><strong>🎯 الحالة:</strong> <span class="status-badge ${order.Status.toLowerCase()}">${statusEmoji[order.Status]} ${getStatusText(order.Status)}</span></p>
+          </div>
+        </div>
+      </div>
+
+      ${mapHTML}
+
+      <div class="detail-section">
+        <h3>🛒 المنتجات المطلوبة</h3>
+        <div class="products-list">
+          ${items
+            .map(
+              (item, idx) =>
+                `
+              <div class="product-item">
+                <span class="product-num">${idx + 1}</span>
+                <div class="product-info">
+                  <strong>${item.name}</strong>
+                  <p>الكمية: ${item.qty} | السعر: ${item.price} ريال</p>
+                </div>
+                <span class="product-total">${item.qty * item.price} ريال</span>
+              </div>
+            `
+            )
+            .join("")}
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>💰 ملخص الفاتورة</h3>
+        <div class="invoice-summary">
+          <div class="summary-row">
+            <span>الإجمالي:</span>
+            <strong>${order.Total} ريال</strong>
+          </div>
+          ${order.DeliveryTime ? `
+            <div class="summary-row">
+              <span>⏰ وقت التوصيل المتوقع:</span>
+              <strong>${order.DeliveryTime}</strong>
+            </div>
+          ` : ""}
+          ${order.RejectReason ? `
+            <div class="summary-row reject">
+              <span>❌ سبب الرفض:</span>
+              <strong>${order.RejectReason}</strong>
+            </div>
+          ` : ""}
+        </div>
+      </div>
+    </div>
+  `;
 
   document.getElementById("orderDetails").innerHTML = details;
   document.getElementById("orderModal").classList.add("active");
+
+  // تحميل الخريطة بعد 100ms للتأكد من أن العنصر موجود
+  if (location && location.coordinates) {
+    setTimeout(() => loadOrderMap(location), 100);
+  }
+}
+
+// تحميل خريطة Leaflet
+function loadOrderMap(location) {
+  const { latitude, longitude } = location.coordinates;
+  
+  // حذف خريطة قديمة إذا كانت موجودة
+  if (window.orderMapInstance) {
+    window.orderMapInstance.remove();
+  }
+
+  // إنشاء خريطة جديدة
+  window.orderMapInstance = L.map("orderMap").setView([latitude, longitude], 15);
+
+  // إضافة طبقة الخريطة
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap contributors",
+    maxZoom: 19,
+  }).addTo(window.orderMapInstance);
+
+  // إضافة علامة على الموقع
+  L.marker([latitude, longitude])
+    .addTo(window.orderMapInstance)
+    .bindPopup(`<strong>📍 موقع الطلب</strong><br>${location.address}`)
+    .openPopup();
 }
 
 function closeModal() {
   document.getElementById("orderModal").classList.remove("active");
+  if (window.orderMapInstance) {
+    window.orderMapInstance.remove();
+    window.orderMapInstance = null;
+  }
 }
 
-// Update Order Status
 async function updateOrderStatus(
   orderId,
   status,
@@ -326,6 +373,7 @@ async function updateOrderStatus(
     if (!response.ok) throw new Error("فشل تحديث الطلب");
 
     showNotification("✅ تم تحديث الطلب بنجاح");
+    closeModal();
     loadOrders();
   } catch (error) {
     console.error(error);
@@ -333,7 +381,6 @@ async function updateOrderStatus(
   }
 }
 
-// Show Notification
 function showNotification(message, type = "success") {
   const notification = document.createElement("div");
   notification.className = "notification";
@@ -391,7 +438,6 @@ async function rejectOrder(orderId) {
     }
   );
 }
-
 
 function goToDataEntry() {
   if (sessionStorage.getItem("isLoggedIn") === "true") {
