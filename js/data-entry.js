@@ -3,26 +3,93 @@ const CONFIG = {
     AUTH_TOKEN: btoa("admin:DashboardSecure2025"),
 };
 
+let categories = []; // لتخزين الكاتيجوريات
+
+// جلب الكاتيجوريات من الـ webhook
+async function fetchCategories() {
+    try {
+        const response = await fetch(`${CONFIG.N8N_URL}/get-category`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Basic ${CONFIG.AUTH_TOKEN}`,
+            },
+        });
+
+        if (response.ok) {
+            categories = await response.json();
+        }
+    } catch (error) {
+        console.error("خطأ في جلب الكاتيجوريات:", error);
+    }
+}
+
+// إظهار الـ suggestions
+function showSuggestions(value) {
+    const suggestionsList = document.getElementById("categorySuggestions");
+    
+    if (!value.trim()) {
+        suggestionsList.innerHTML = "";
+        suggestionsList.style.display = "none";
+        return;
+    }
+
+    // تصفية الكاتيجوريات بناءً على ما كتبه المستخدم
+    const filtered = categories.filter(item =>
+        item.category.includes(value)
+    );
+
+    if (filtered.length === 0) {
+        suggestionsList.innerHTML = "";
+        suggestionsList.style.display = "none";
+        return;
+    }
+
+    // عرض الـ suggestions
+    suggestionsList.innerHTML = filtered
+        .map(item => `<div class="suggestion-item">${item.category}</div>`)
+        .join("");
+    suggestionsList.style.display = "block";
+
+    // إضافة event listeners للـ suggestions
+    document.querySelectorAll(".suggestion-item").forEach(item => {
+        item.addEventListener("click", () => {
+            document.getElementById("category").value = item.textContent;
+            suggestionsList.style.display = "none";
+        });
+    });
+}
+
 // توليد SKU فريد من 10 أرقام
 function generateSKU() {
-    // الوقت الحالي بـ milliseconds - آخر 8 أرقام
     const timestamp = Date.now().toString().slice(-8);
-
-    // رقمين عشوائيين إضافيين
     const random = Math.floor(Math.random() * 100)
         .toString()
         .padStart(2, "0");
-
-    // SKU نهائي = 10 أرقام
-    const sku =  random +timestamp ;
-
+    const sku = random + timestamp;
     document.getElementById("sku").value = sku;
     return sku;
 }
 
-// توليد SKU عند تحميل الصفحة
+// عند تحميل الصفحة
 window.addEventListener("load", () => {
     generateSKU();
+    fetchCategories();
+});
+
+// Event listener لـ category input
+document.getElementById("category").addEventListener("input", (e) => {
+    showSuggestions(e.target.value);
+});
+
+// إخفاء الـ suggestions عند الضغط خارجها
+document.addEventListener("click", (e) => {
+    const categoryInput = document.getElementById("category");
+    const suggestionsList = document.getElementById("categorySuggestions");
+    
+    if (e.target !== categoryInput && !e.target.closest("#categorySuggestions")) {
+        suggestionsList.style.display = "none";
+    }
 });
 
 document.getElementById("dataForm").addEventListener("submit", async (e) => {
@@ -36,7 +103,6 @@ document.getElementById("dataForm").addEventListener("submit", async (e) => {
         image: document.getElementById("image").value,
     };
 
-    // التحقق من البيانات
     if (
         !formData.sku ||
         !formData.name ||
@@ -66,11 +132,8 @@ document.getElementById("dataForm").addEventListener("submit", async (e) => {
         const result = await response.json();
         showNotification("✅ تم إضافة المنتج بنجاح", "success");
         document.getElementById("dataForm").reset();
-
-        // توليد SKU جديد بعد الإضافة
         generateSKU();
 
-        // رجوع للصفحة الرئيسية بعد ثانية
         setTimeout(() => {
             // window.location.href = "admin.html";
         }, 1500);
@@ -109,8 +172,6 @@ function goBack() {
     window.location.href = "admin.html";
 }
 
-// التحقق من حالة تسجيل الدخول
 if (sessionStorage.getItem("isLoggedIn") !== "true") {
-    // إذا المستخدم مش مسجل دخول، نحوله إلى صفحة تسجيل الدخول
     window.location.href = "admin.html";
 }

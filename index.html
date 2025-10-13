@@ -46,11 +46,11 @@
 
         <form id="checkoutForm">
           <h3>تفاصيل العميل</h3>
-          <input name="name" placeholder="الاسم" required />
-          <input name="address" placeholder="العنوان" required />
+          <input name="name" placeholder="👤 اسمك الكامل" required />
+          <input name="address" placeholder="📍 عنوان التوصيل" required />
           <input
             name="phone"
-            placeholder="رقم التليفون"
+            placeholder="📱 رقم الهاتف"
             type="tel"
             pattern="[0-9]+"
             inputmode="numeric"
@@ -61,9 +61,14 @@
         </form>
 
         <div id="orderResult" class="hidden"></div>
+            <!-- زر الرجوع -->
+    <div class="cart-navigation" style="margin-top: 2rem; justify-content: center;">
+        <button class="cart-nav-btn back-btn" onclick="showMainPage()">
+            ← العودة للتسوق
+        </button>
+    </div>
       </main>
     </div>
-
     <script src="js/utils.js"></script>
     <script src="js/products.js"></script>
     <script src="js/cart.js"></script>

@@ -46,7 +46,7 @@ async function fetchProductsFromSheets() {
 
     renderCategories();
     renderProducts(products);
-    showSuccessMessage(`تم تحميل ${products.length} منتج بنجاح ✅`);
+    // showSuccessMessage(`تم تحميل ${products.length} منتج بنجاح ✅`);
 
   } catch (error) {
     console.error('❌ خطأ في تحميل المنتجات:', error);

@@ -46,10 +46,11 @@ function showNotification(message) {
     background: #4CAF50;
     color: white;
     padding: 15px 20px;
-    border-radius: 5px;
+    border-radius: 8px;
     z-index: 10000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     transition: all 0.3s ease;
+    font-weight: 600;
   `;
   notification.textContent = message;
   document.body.appendChild(notification);
@@ -70,8 +71,12 @@ function renderCartItems() {
   const cart = loadCart();
 
   if (cart.length === 0) {
-    container.innerHTML =
-      '<p style="text-align:center;padding:2rem;background:white;border-radius:8px;">العربة فارغة</p>';
+    container.innerHTML = `
+      <div class="empty-cart-message">
+        <p>🛒</p>
+        <p>العربة فارغة</p>
+      </div>
+    `;
     $("#cartTotal").textContent = "المجموع: 0 ريال";
     return;
   }
@@ -79,28 +84,65 @@ function renderCartItems() {
   cart.forEach((item) => {
     const row = document.createElement("div");
     row.className = "cart-row";
+    
+    const totalPrice = item.price * item.qty;
+    
     row.innerHTML = `
-      <div>
-        <strong>${item.name}</strong>
-        <div style="margin-top:0.5rem;">${item.price} ج × 
-          <input type="number" min="1" value="${item.qty}" 
-                 style="width:60px" onchange="updateQty('${
-                   item.sku
-                 }', this.value)" />
-        </div>
+      <img src="${item.image}" alt="${item.name}" class="cart-product-image"
+           onerror="this.src='https://placehold.co/80x80?text=${encodeURIComponent(item.name)}'">
+      
+      <div class="cart-product-info">
+        <div class="cart-product-name">${item.name}</div>
+        <div class="cart-product-category">${item.category}</div>
+        <div style="color: #999; font-size: 0.9rem;">${item.price} ريال / القطعة</div>
       </div>
-      <div>
-        <div style="margin-bottom:0.5rem;">المجموع: ${
-          item.price * item.qty
-        } ريال</div>
-        <button onclick="removeFromCart('${item.sku}')">حذف</button>
+      
+      <div class="cart-quantity-section">
+        <div class="quantity-control">
+          <button onclick="decreaseQty('${item.sku}')">−</button>
+          <input type="number" min="1" value="${item.qty}" 
+                 onchange="updateQty('${item.sku}', this.value)" 
+                 style="pointer-events: none;">
+          <button onclick="increaseQty('${item.sku}')">+</button>
+        </div>
+        <div style="font-size: 0.85rem; color: #666;">الكمية: ${item.qty}</div>
+      </div>
+      
+      <div class="cart-actions">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; width: 100%;">
+          <div class="cart-product-price">${totalPrice} ريال</div>
+          <button class="cart-delete-btn" onclick="removeFromCart('${item.sku}')">🗑️ حذف</button>
+        </div>
       </div>
     `;
     container.appendChild(row);
   });
 
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  $("#cartTotal").textContent = `المجموع: ${total} ريال`;
+  $("#cartTotal").innerHTML = `
+    <div class="total-label">إجمالي المشتريات</div>
+    <p class="total-amount" style="margin: 0;">${total} ريال</p>
+  `;
+}
+
+function increaseQty(sku) {
+  const cart = loadCart();
+  const idx = cart.findIndex((i) => String(i.sku) === String(sku));
+  if (idx > -1) {
+    cart[idx].qty += 1;
+    saveCart(cart);
+    renderCartItems();
+  }
+}
+
+function decreaseQty(sku) {
+  const cart = loadCart();
+  const idx = cart.findIndex((i) => String(i.sku) === String(sku));
+  if (idx > -1 && cart[idx].qty > 1) {
+    cart[idx].qty -= 1;
+    saveCart(cart);
+    renderCartItems();
+  }
 }
 
 function updateQty(sku, qty) {
@@ -139,20 +181,50 @@ async function submitOrder(formData) {
   const formattedDate = `${now.getDate()}/${
     now.getMonth() + 1
   }/${now.getFullYear()} ${hours}:${minutes} ${ampm}`;
-
-  // ✅ استخراج بيانات GPS من input الموقع
+  // ✅ استخراج بيانات GPS من input الموقع أو تلقائيًا إذا لم يضغط المستخدم
   let locationData = null;
   const addressInput = document.querySelector('input[name="address"]');
-  
+
   if (addressInput && addressInput.dataset.gpsLocation) {
     try {
       // البيانات محفوظة كـ JSON كامل في dataset
       locationData = JSON.parse(addressInput.dataset.gpsLocation);
-      console.log('📍 بيانات GPS المرسلة:', locationData);
+      console.log('📍 بيانات GPS (من المستخدم):', locationData);
     } catch (e) {
       console.warn('⚠️ خطأ في قراءة بيانات GPS من input');
     }
   }
+
+  // 🧭 إذا ما فيش بيانات GPS من المستخدم — حاول تجيبها تلقائيًا
+  if (!locationData && navigator.geolocation) {
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 7000,
+          maximumAge: 0
+        });
+      });
+
+      locationData = {
+        type: "Point",
+        coordinates: [pos.coords.longitude, pos.coords.latitude],
+        accuracy_meters: pos.coords.accuracy,
+        altitude_meters: pos.coords.altitude,
+        altitude_accuracy_meters: pos.coords.altitudeAccuracy,
+        heading_degrees: pos.coords.heading,
+        speed_kmh: pos.coords.speed ? pos.coords.speed * 3.6 : null,
+        timestamp: pos.timestamp,
+        address: formData.get("address") || "لم يتم إدخال عنوان يدوي",
+        device_info: navigator.userAgent
+      };
+
+      console.log("📍 تم تحديد الموقع تلقائيًا:", locationData);
+    } catch (err) {
+      console.warn("⚠️ تعذر تحديد الموقع تلقائيًا:", err.message);
+    }
+  }
+
 
   const order = {
     orderId,
@@ -219,28 +291,15 @@ async function submitOrder(formData) {
 
     // عرض رسالة النجاح مع معلومات الموقع
     let successHtml = `
-      <p>✅ تم إرسال الطلب بنجاح.</p>
+      <p>✅ <strong>تم إرسال الطلب بنجاح!</strong></p>
       <p>رقم الطلب: <strong>${orderId}</strong></p>
-      <p>تاريخ الطلب: ${formattedDate}</p>
+      <p>تاريخ الطلب: <strong>${formattedDate}</strong></p>
       <p>الإجمالي: <strong>${order.total} ريال</strong></p>
     `;
 
     // إضافة معلومات GPS إذا توفرت
     if (locationData && locationData.coordinates) {
       const mapLink = `https://maps.google.com/?q=${locationData.coordinates[1]},${locationData.coordinates[0]}`;
-      successHtml += `
-        <div style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 5px; text-align: right;">
-          <strong>📍 بيانات الموقع المرسلة:</strong>
-          <p style="margin: 0.5rem 0;"><strong>العنوان:</strong> ${locationData.address}</p>
-          <p style="margin: 0.5rem 0;"><strong>دقة التحديد:</strong> ±${locationData.accuracy_meters} متر</p>
-          <p style="margin: 0.5rem 0; direction: ltr; text-align: left; font-family: monospace; font-size: 12px;">
-            <strong>الإحداثيات:</strong> ${locationData.coordinates[1].toFixed(6)}, ${locationData.coordinates[0].toFixed(6)}
-          </p>
-          <a href="${mapLink}" target="_blank" style="color: #1976d2; text-decoration: none;">
-            🗺️ عرض على الخريطة →
-          </a>
-        </div>
-      `;
     }
 
     $("#orderResult").classList.remove("hidden");

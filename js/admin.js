@@ -202,9 +202,25 @@ function getStatusText(status) {
   const map = { Pending: "قيد الانتظار", Accepted: "مقبول", Rejected: "مرفوض" };
   return map[status] || status;
 }
+function getDeviceFromInfo(deviceInfo) {
+  if (!deviceInfo) return "غير معروف";
 
+  const ua = deviceInfo.toLowerCase();
+
+  if (ua.includes("android") || ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod")) {
+    return "📱 موبايل";
+  }
+
+  return "💻 كمبيوتر";
+}
 // View Order Details with Map
 function viewOrder(orderId) {
+  document.getElementById("orderModal").addEventListener("click", function(e) {
+  // إذا تم الضغط على الخلفية وليس على المحتوى الداخلي
+  if (e.target === this) {
+    closeModal();
+  }
+});
   const order = allOrders.find((o) => o.OrderID === orderId);
   if (!order) return;
 
@@ -219,6 +235,9 @@ function viewOrder(orderId) {
 
   let mapHTML = "";
   if (location && location.coordinates) {
+      const lat = location.coordinates.latitude;
+  const lng = location.coordinates.longitude;
+  const googleMapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
     mapHTML = `
       <div class="detail-section map-section">
         <h3>📍 الموقع على الخريطة</h3>
@@ -228,11 +247,17 @@ function viewOrder(orderId) {
           <p style="margin:5px 0;font-size:0.9em;color:#666;">
             <strong>📐 الإحداثيات:</strong> ${location.coordinates.latitude.toFixed(4)}, ${location.coordinates.longitude.toFixed(4)}
           </p>
+                    <p style="margin-top:8px;">
+            🌍 <a href="${googleMapsLink}" target="_blank" style="color:#007bff;text-decoration:none;">
+              عرض الموقع على Google Maps
+            </a>
+          </p>
+          
         </div>
       </div>
     `;
   }
-
+console.log(location);
   const details = `
     <div class="order-modal-header">
       <h2>📦 تفاصيل الطلب #${order.OrderID}</h2>
@@ -247,6 +272,9 @@ function viewOrder(orderId) {
             <p><strong>👤 الاسم:</strong> ${order.CustomerName}</p>
             <p><strong>📱 الهاتف:</strong> ${order.Phone}</p>
             <p><strong>🏠 العنوان:</strong> ${order.Address}</p>
+            <p><strong>🖥 الجهاز المستخدم:</strong> ${getDeviceFromInfo(location.device_info)}</p>
+
+
           </div>
         </div>
 
