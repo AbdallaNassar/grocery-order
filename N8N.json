@@ -1,0 +1,3109 @@
+{
+  "name": "Add Product to Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "callback_query",
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1584,
+        16
+      ],
+      "id": "7e17f5bf-f8bc-4b36-bd38-8b5ec818c1d4",
+      "name": "Telegram Trigger2",
+      "webhookId": "cd005bf6-3d8a-4ee7-bc38-cf5738c64053",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query?.data }}",
+                    "rightValue": "ACC:",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "6f1ec3d9-150c-4d63-b676-6a9a8bf78a74"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Accept"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query?.data }}",
+                    "rightValue": "REJ:",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "86cd7897-66e8-49c5-9de5-44fa0d383a37"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reject"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "T30: ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "2a5bea5e-bb33-4665-9d6d-997ed40d1d74"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Time 30"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query?.data }}",
+                    "rightValue": "T60:",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "d23d9c38-dc7a-4f0e-9bb3-922b8efb8b34"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Time 60"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query?.data }}",
+                    "rightValue": "T90:",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "bb0bb7c5-3549-41c4-8b9b-19cbe1e50738"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Time 90"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message?.reply_to_message?.text }}",
+                    "rightValue": "سبب الرفض",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "76ed0749-2097-4528-95c7-e19027b8423d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reject Reason"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -1360,
+        -48
+      ],
+      "id": "5c4dcb3d-0572-45cb-af01-aacb3cdcaf4b",
+      "name": "Main Switch2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $json.orderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -912,
+        -464
+      ],
+      "id": "e9e35834-a734-48c2-a7db-defc22d4f7ff",
+      "name": "Check Accept Order Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "Pending",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Can Accept"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -688,
+        -464
+      ],
+      "id": "621e517a-37ce-4619-8a35-bf65a73ea371",
+      "name": "Accept Status Check"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger2').item.json.callback_query.message.chat.id }}",
+        "text": "=⚠️ *هذا الطلب تم معالجته بالفعل!*\n\n📦 *رقم الطلب:* `{{ $json.OrderID }}`\n✅ *الحالة الحالية:* {{ $json.Status }}\n\n❌ لا يمكن تعديله مرة أخرى.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -368
+      ],
+      "id": "af3f63f9-0d2c-49b9-85fd-2d47fa4caca8",
+      "name": "Already Processed Message",
+      "webhookId": "14ca88d2-da45-4398-bc3f-8ff7f657ff62",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json.callback_query.data;\nconst orderID = data.replace('ACC:', '').trim();\n\nreturn { orderID };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        -464
+      ],
+      "id": "c6c1858c-079a-417d-b48e-b1797a5c782d",
+      "name": "Get Accept OrderID3"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger2').item.json.callback_query.message.chat.id }}",
+        "text": "=✅ *تم قبول الطلب رقم:* `{{ $json.OrderID }}`\n\nحدد وقت التوصيل:",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "⏰ 30 دقيقة",
+                    "additionalFields": {
+                      "callback_data": "=T30:{{ $json.OrderID }}"
+                    }
+                  },
+                  {
+                    "text": "⏰ 60 دقيقة",
+                    "additionalFields": {
+                      "callback_data": "=T60:{{ $json.OrderID }}"
+                    }
+                  },
+                  {
+                    "text": "⏰ 90 دقيقة",
+                    "additionalFields": {
+                      "callback_data": "=T90:{{ $json.OrderID }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -560
+      ],
+      "id": "58b72819-cfc9-40dd-a8f1-79b972149cc4",
+      "name": "Ask Delivery Time3",
+      "webhookId": "2abe448a-5769-4c5b-b936-748dde2c2bac",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $json.orderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -912,
+        -80
+      ],
+      "id": "c5712624-deab-4287-b046-88523d307d4d",
+      "name": "Check Reject Order Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "Pending",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Can Reject"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -688,
+        -80
+      ],
+      "id": "c74b73cb-4c34-4aac-93f9-ee48d78af118",
+      "name": "Reject Status Check"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger2').item.json.callback_query.message.chat.id }}",
+        "text": "=⚠️ *هذا الطلب تم معالجته بالفعل!*\n\n📦 *رقم الطلب:* `{{ $json.OrderID }}`\n✅ *الحالة الحالية:* {{ $json.Status }}\n\n❌ لا يمكن تعديله مرة أخرى.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        16
+      ],
+      "id": "909139ab-d74b-4cd7-b640-079d5f28a255",
+      "name": "Already Processed Reject Message",
+      "webhookId": "7a6c15b3-688b-4d70-b6e3-ebc32a2681df",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json.callback_query.data;\nconst orderID = data.replace('REJ:', '').trim();\n\nreturn { orderID };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        -80
+      ],
+      "id": "3fb6ba74-836b-4190-b2d9-a0f116cdeed3",
+      "name": "Get Reject OrderID2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger2').item.json.callback_query.message.chat.id }}",
+        "text": "=❌ *تم رفض الطلب رقم:* `{{ $json.OrderID }}`\n\nرد على هذه الرسالة بسبب الرفض:",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        -176
+      ],
+      "id": "105fc64c-ebda-4c34-9315-1081a8fab249",
+      "name": "Ask Reject Reason2",
+      "webhookId": "e29b78d3-f91f-4a19-8d4f-a4a3a755002b",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $json.orderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -912,
+        208
+      ],
+      "id": "577aa8ad-7549-4c50-afe9-63580afab4ee",
+      "name": "Check Time Order Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// نجيب الـ deliveryTime من الـ node السابق\nconst deliveryTime = $('Get Time Data3').item.json.deliveryTime;\n\n// نضيفه للـ data الحالية\nreturn {\n  ...($input.item.json),\n  deliveryTime: deliveryTime\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        208
+      ],
+      "id": "e4c93a52-e7c8-4411-8d67-15e573b85e4a",
+      "name": "Merge Time Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const orderItems = JSON.parse($json.OrderJSON);\n\n// تنسيق شكل عرض المنتجات\nconst itemsList = orderItems.map((item, index) => \n  `${index + 1}️⃣ ${item.name}  |  📦 الكمية: ${item.qty}  |  💰 السعر: ${item.price * item.qty} ريال`\n).join(\"\\n\");\n\n// الرسالة الكاملة (اختياري لو حابب تستخدمها)\nconst message = `📦 *تفاصيل الطلب*  \n━━━━━━━━━━━━━━━\n👤 الاسم: ${$json.CustomerName}\n📞 الهاتف: ${$json.Phone}\n📍 العنوان: ${$json.Address}\n\n🧾 *المنتجات:*  \n${itemsList}\n\n━━━━━━━━━━━━━━━\n💰 *الإجمالي الكلي:* ${$json.Total} ريال  \n🕒 وقت التسليم: ${$json.DeliveryTime}  \n`;\n\nreturn [\n  {\n    json: {\n      ...$json,\n      itemsList,\n      message\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        208
+      ],
+      "id": "8913b32d-e414-4dd7-b587-f94c1d8d8832",
+      "name": "Format Accepted WhatsApp Message1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.item.json.callback_query.data;\nconst parts = data.split(':');\n\nconst time = parts[0].replace('T', '').trim();\nconst orderID = parts[1].trim();\n\nreturn [\n  { \n    orderID,\n    deliveryTime: time\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        208
+      ],
+      "id": "84c6aa0f-f87f-4027-91a3-374c85c4415e",
+      "name": "Get Time Data3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Accepted",
+            "DeliveryTime": "={{ $json.deliveryTime }} دقيقة",
+            "OrderID": "={{ $json.OrderID }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "OrderID"
+          ],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DeliveryTime",
+              "displayName": "DeliveryTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        208
+      ],
+      "id": "2dc4e1d4-70c1-4ceb-bd93-b28ba80840d2",
+      "name": "Update Accepted Order3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger2').item.json.callback_query.message.chat.id }}",
+        "text": "=✅ *تم تأكيد الطلب رقم:* `{{ $json.OrderID }}`\n⏰ *وقت التوصيل:* {{ $json.DeliveryTime }}\n\n✨ تم حفظ البيانات بنجاح!",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        208
+      ],
+      "id": "da0ae9d8-cc30-4a66-9c05-dd2191b870df",
+      "name": "Confirm Accepted3",
+      "webhookId": "31d85257-aff8-4e6f-8389-5d31658ae4d9",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $('Check Time Order Status').item.json.OrderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        208
+      ],
+      "id": "6bfde784-3d07-499b-ac04-3104834fc458",
+      "name": "Lookup Accepted Order Data2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "test",
+        "remoteJid": "=966{{ $json.Phone }}@s.whatsapp.net",
+        "messageText": "=📦 *تفاصيل الطلب*  \n━━━━━━━━━━━━━━━\n👤 *الاسم:* {{ $json.CustomerName }}\n📞 *الهاتف:* {{$json.Phone}}\n📍 *العنوان:* {{$json.Address}}\n━━━━━━━━━━━━━━━\n\n🧾 *المنتجات:*  \n{{ $json.itemsList }}\n━━━━━━━━━━━━━━━\n💰 *الإجمالي الكلي:* {{$json.Total}} ريال  \n🕒 *وقت التسليم:* {{$json.DeliveryTime}}  \n\n✨ شكراً لثقتك بنا!\nسيتم التواصل معك قريباً لتأكيد التوصيل.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        432,
+        208
+      ],
+      "id": "1569bb73-17ee-4ba6-a61a-e6e0f583d2aa",
+      "name": "Send Accepted to Customer2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "gLznekvmrGI4eykr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $json.orderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -912,
+        496
+      ],
+      "id": "5f4141eb-a3a3-4bc5-9af0-1d2319ae3121",
+      "name": "Check Reject Reason Order Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.Status }}",
+                    "rightValue": "Pending",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Can Add Reason"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -688,
+        496
+      ],
+      "id": "86ad173d-22d1-4095-bf32-ac50fbbecf3c",
+      "name": "Reject Reason Status Check"
+    },
+    {
+      "parameters": {
+        "chatId": "851276879",
+        "text": "=⚠️ *هذا الطلب تم معالجته بالفعل!*\n\n📦 *رقم الطلب:* `{{ $json.OrderID }}`\n✅ *الحالة الحالية:* {{ $json.Status }}\n\n❌ لا يمكن رفضه مرة أخرى.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -464,
+        560
+      ],
+      "id": "215890f8-3b58-4841-bbcf-74b575227c75",
+      "name": "Already Processed Reason Message",
+      "webhookId": "9234c085-7c8f-45d5-bf4f-71536fc29582",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rejectReason = $('Get Reject Reason3').item.json.rejectReason;\n\nreturn {\n  ...($input.item.json),\n  rejectReason: rejectReason\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -464,
+        400
+      ],
+      "id": "7dce1ded-0ea6-4c0e-bbd3-bf84ed1e3c4f",
+      "name": "Merge Reject Reason"
+    },
+    {
+      "parameters": {
+        "jsCode": "// نص الرسالة الأصلية اللي اترد عليها\nconst originalText = $json.message.reply_to_message.text;\n\n// نص الرسالة الحالية (سبب الرفض)\nconst rejectReason = $json.message.text;\n\n// استخراج OrderID بعد كلمة \"رقم:\"\nconst match = originalText.match(/رقم:\\s*([a-zA-Z0-9]+)/);\nconst orderID = match ? match[1] : '';\n\nreturn [\n  {\n    orderID,\n    rejectReason\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1136,
+        496
+      ],
+      "id": "30758753-059d-4d46-8175-4c7c73e6fc74",
+      "name": "Get Reject Reason3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Rejected",
+            "RejectReason": "={{ $json.rejectReason }}",
+            "row_number": 0,
+            "OrderID": "={{ $json.OrderID }}"
+          },
+          "matchingColumns": [
+            "OrderID"
+          ],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RejectReason",
+              "displayName": "RejectReason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -240,
+        400
+      ],
+      "id": "ada8f4dc-6062-41bb-8818-0e1a9d318e4b",
+      "name": "Update Rejected Order3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger2').item.json.message.reply_to_message.chat.id }}",
+        "text": "=❌ *تم رفض الطلب رقم:* `{{ $json.OrderID }}`\n📝 *السبب:* {{ $json.RejectReason }}\n\n✨ تم حفظ البيانات بنجاح!\nسيتم إرسال السبب للعميل عبر الواتساب.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        400
+      ],
+      "id": "4809e0ef-64e3-46e8-a2e5-cb6533d02a5c",
+      "name": "Confirm Rejected3",
+      "webhookId": "dca459fb-84dc-4c36-b021-f48fbcb5456c",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $('Update Rejected Order3').item.json.OrderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        400
+      ],
+      "id": "c1db6627-1e53-4593-bb3c-cd5e5e422ba2",
+      "name": "Lookup Rejected Order Data2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "test",
+        "remoteJid": "=966{{ $json.Phone }}@s.whatsapp.net",
+        "messageText": "=❌ *نأسف، تم رفض طلبك*\n\nمرحباً *{{ $json.CustomerName }}* 👋\n\n📦 *رقم الطلب:* {{ $json.OrderID }}\n\n📝 *سبب الرفض:*\n{{ $json.RejectReason }}\n\n🙏 نعتذر عن الإزعاج ونتمنى خدمتك في وقت آخر.\n\nللاستفسار يمكنك التواصل معنا مباشرة.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        432,
+        400
+      ],
+      "id": "e586e158-f86a-4ab8-8c6f-855137530127",
+      "name": "Send Rejected to Customer2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "gLznekvmrGI4eykr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🔐 Security Check\nconst origin = \"https://yourwebsite.com\";\nconst auth = $input.first().json.headers.authorization;\n\n// ✅ فحص الـ Origin\nconst allowedOrigin = \"https://yourwebsite.com\";\nif (origin !== allowedOrigin) {\n  throw new Error(\"❌ Unauthorized Origin: \" + origin);\n}\n\n// ✅ فحص الـ Basic Auth\nconst expectedAuth = \"Basic \" + Buffer.from(\"client:Abdallasuper2025samysuper\").toString(\"base64\");\nif (auth !== expectedAuth) {\n  throw new Error(\"❌ Invalid Authorization\");\n}\n\n// ✅ كل حاجة تمام - نكمل\nconsole.log(\"✅ Security check passed\");\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        -768
+      ],
+      "id": "732d204b-cc7c-4ed3-ba4e-b3b6e616b6f4",
+      "name": "Security Check"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk",
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1168,
+        -768
+      ],
+      "id": "94dd510a-e3e6-4b86-98e6-b124b1cbbdb9",
+      "name": "Get Products from Sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "order",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        -768
+      ],
+      "id": "f9f42300-1c26-4693-98ee-fdcc86c64b1f",
+      "name": "Webhook - New Order1",
+      "webhookId": "47579913-79a1-4243-8cf5-f47d16a99cf1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "OrderID": "={{ $json.body.orderId }}",
+            "CustomerName": "={{ $json.body.customer.name }}",
+            "Address": "={{ $json.body.customer.addressInput }}",
+            "Phone": "={{ $json.body.customer.phone }}",
+            "OrderJSON": "={{ JSON.stringify($json.body.items) }}",
+            "Total": "={{ $json.body.total }}",
+            "Date": "={{ $json.body.formattedDate }}",
+            "Status": "Pending",
+            "Location": "={{ $json.body.customer.location }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "CustomerName",
+              "displayName": "CustomerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "OrderJSON",
+              "displayName": "OrderJSON",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DeliveryTime",
+              "displayName": "DeliveryTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RejectReason",
+              "displayName": "RejectReason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        272,
+        -768
+      ],
+      "id": "61bafc25-6e5b-4b24-9a88-adf373df4231",
+      "name": "Add to Sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "851276879",
+        "text": "=📦 *طلب جديد رقم:* `{{ $json.OrderID }}`\n\n👤 *العميل:* {{ $json.CustomerName }}\n📍 *العنوان:* {{ $json.Address }}\n📞 *الهاتف:* {{ $json.Phone }}\n\n🛒 *المنتجات:*\n{{\n  JSON.parse($json.OrderJSON)\n    .map(item => `  • ${item.name} - الكمية: ${item.qty} - السعر: ${item.price} ريال`)\n    .join('\\n')\n}}\n\n💰 *الإجمالي:* {{ $json.Total }} ريال\n📅 *التاريخ:* {{ $json.Date }}\n🌍 *موقع العميل:* [عرض على الخريطة](https://www.google.com/maps?q={{ $json.Location.coordinates.latitude }},{{ $json.Location.coordinates.longitude }})\n📱 *نوع الجهاز:* {{\n  $json.Location.device_info.includes('Mobile')\n    ? 'موبايل 📱'\n    : 'كمبيوتر 💻'\n}}\n\n",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ قبول",
+                    "additionalFields": {
+                      "callback_data": "=ACC: {{ $json.OrderID }}"
+                    }
+                  },
+                  {
+                    "text": "❌ رفض",
+                    "additionalFields": {
+                      "callback_data": "=REJ: {{ $json.OrderID }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        -768
+      ],
+      "id": "db5cd916-ce44-408c-9367-c77201dcee92",
+      "name": "Send Order to Telegram1",
+      "webhookId": "6504feec-9bb5-4815-b438-f070742eecce",
+      "credentials": {
+        "telegramApi": {
+          "id": "U1BKwKGPyNfTbCx9",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🔐 Security Check for Products\nconst origin = \"https://yourwebsite.com\";\nconst auth = $input.first().json.headers.authorization\n\n// ✅ فحص الـ Origin\nconst allowedOrigin = \"https://yourwebsite.com\";\nif (origin !== allowedOrigin) {\n  throw new Error(\"❌ Unauthorized Origin: \" + origin);\n}\n\n// ✅ فحص الـ Basic Auth\nconst expectedAuth = \"Basic \" + Buffer.from(\"client:Abdallasuper2025samysuper\").toString(\"base64\");\nif (auth !== expectedAuth) {\n  throw new Error(\"❌ Invalid Authorization\");\n}\n\n// ✅ كل حاجة تمام - نكمل\nconsole.log(\"✅ Security check passed for products\");\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1392,
+        -768
+      ],
+      "id": "0f2e3e08-4d9c-4d36-9be4-01b172b21c3d",
+      "name": "Security Check Products"
+    },
+    {
+      "parameters": {
+        "path": "get-products",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, OPTIONS"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1616,
+        -768
+      ],
+      "id": "8a3f5b2e-502d-46c4-a19c-3e94e368bd63",
+      "name": "Webhook - Get Products1",
+      "webhookId": "dea7db8a-d948-4f86-af7e-238954bfcfe5"
+    },
+    {
+      "parameters": {
+        "path": "get-orders",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1600,
+        896
+      ],
+      "id": "38ed29d7-fd63-44de-bb26-2ee18ce9f8ce",
+      "name": "Webhook - Get Orders",
+      "webhookId": "6fa4f85d-d4bb-457f-b0de-333da5c25196"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "update-order",
+        "responseMode": "lastNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -864,
+        880
+      ],
+      "id": "a3df9c92-e519-413e-b600-57c8ddb73b35",
+      "name": "Webhook - Update Order",
+      "webhookId": "a6170306-d6be-40ba-b147-52e18bed4ae9"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Security Check\nconst headers = $input.first().json.headers;\nconst auth = headers.authorization;\nconst expectedAuth = \"Basic \" + Buffer.from(\"admin:DashboardSecure2025\").toString(\"base64\");\n\nif (!auth || auth !== expectedAuth) {\n  throw new Error(\"Unauthorized\");\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        880
+      ],
+      "id": "c489361f-e90a-49f4-aba6-d66b29e3288d",
+      "name": "Security Check Update"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "={{ $json.body.status }}",
+            "DeliveryTime": "={{ $json.body.deliveryTime || '' }}",
+            "RejectReason": "={{ $json.body.rejectReason || '' }}",
+            "row_number": 0,
+            "OrderID": "={{ $json.body.orderId }}"
+          },
+          "matchingColumns": [
+            "OrderID"
+          ],
+          "schema": [
+            {
+              "id": "OrderID",
+              "displayName": "OrderID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CustomerName",
+              "displayName": "CustomerName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "OrderJSON",
+              "displayName": "OrderJSON",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DeliveryTime",
+              "displayName": "DeliveryTime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "RejectReason",
+              "displayName": "RejectReason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -416,
+        880
+      ],
+      "id": "029f7947-6b75-43c3-9e0d-8f6a0a11f7a4",
+      "name": "Update Order Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Security Check\nconst headers = $input.first().json.headers;\nconst auth = headers.authorization;\nconst expectedAuth = \"Basic \" + Buffer.from(\"admin:DashboardSecure2025\").toString(\"base64\");\n\nif (!auth || auth !== expectedAuth) {\n  throw new Error(\"Unauthorized\");\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1376,
+        896
+      ],
+      "id": "0ad30f3a-bded-450d-abd8-f829fd27512a",
+      "name": "Security Check1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1152,
+        896
+      ],
+      "id": "83ab4d48-e14e-438d-9e65-4ef6333cfa6b",
+      "name": "Get All Orders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [],
+          "string": [
+            {
+              "value1": "={{ $json.Status }}",
+              "value2": "Accepted"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        32,
+        880
+      ],
+      "id": "f715f1f0-918a-4f92-bfcb-51cc63be5cd7",
+      "name": "Check Status"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "test",
+        "remoteJid": "=966{{ $json.Phone }}@s.whatsapp.net",
+        "messageText": "=✅ تم قبول طلبك بنجاح!\n\nمرحباً *{{ $json.CustomerName }}* 👋\n\n📦 *رقم الطلب:* {{ $json.OrderID }}\n⏰ *وقت التوصيل المتوقع:* {{ $json.DeliveryTime }}\n\n🛒 *تفاصيل طلبك:*\n{{ $json.itemsList }}\n\n💰 *الإجمالي:* {{ $json.total }} ريال\n\n✨ شكراً لثقتك بنا!\nسيتم التواصل معك قريباً لتأكيد التوصيل.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        784
+      ],
+      "id": "78625dfa-1997-4a21-b2d0-19dd6afb9316",
+      "name": "Send Accepted to Customer4",
+      "credentials": {
+        "evolutionApi": {
+          "id": "gLznekvmrGI4eykr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "test",
+        "remoteJid": "=966{{ $json.Phone }}@s.whatsapp.net",
+        "messageText": "=❌ *نأسف، تم رفض طلبك*\n\nمرحباً *{{ $json.CustomerName }}* 👋\n\n📦 *رقم الطلب:* {{ $json.OrderID }}\n\n📝 *سبب الرفض:*\n{{ $json.RejectReason }}\n\n🙏 نعتذر عن الإزعاج ونتمنى خدمتك في وقت آخر.\n\nللاستفسار يمكنك التواصل معنا مباشرة.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api-english.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        256,
+        976
+      ],
+      "id": "1e350811-64c4-458d-b575-611068318e05",
+      "name": "Send Rejected to Customer4",
+      "credentials": {
+        "evolutionApi": {
+          "id": "gLznekvmrGI4eykr",
+          "name": "Evolution account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ay6Js2EKcWeeY5pa0bJtdW-JOvi96SDetfMXBpEOuJI/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "OrderID",
+              "lookupValue": "={{ $json.OrderID }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        880
+      ],
+      "id": "e9ae33dd-b876-44f8-bc78-0036f2f45787",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const orderItems = JSON.parse($json.OrderJSON);\n\nconst itemsList = orderItems.map(item => `- ${item.name} x${item.qty} = ${item.price * item.qty} ريال`).join(\"\\n\");\n\nreturn [\n  {\n    json: {\n      ...$json,\n      itemsList,\n      total: $json.Total\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        256,
+        784
+      ],
+      "id": "3d86c59c-353d-4f9e-8ca4-b3f2f39e3d38",
+      "name": "Format Accepted WhatsApp Message"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "admin-login",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "4af18551-455a-4d7e-9003-ccb0076890a2",
+      "name": "Webhook - Admin Login",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        1296
+      ],
+      "webhookId": "admin-login-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.body.email}}",
+              "value2": "admin@admin.com"
+            },
+            {
+              "value1": "={{$json.body.password}}",
+              "value2": "Admin2025"
+            },
+            {
+              "value1": "={{ $json.headers.authorization }}",
+              "value2": "=Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ=="
+            }
+          ]
+        }
+      },
+      "id": "58e0a10d-5666-4b73-aa95-a0463da9b64c",
+      "name": "Check Credentials",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        1296
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\": true, \"message\": \"تم تسجيل الدخول بنجاح\", \"email\": \"{{$json.body.email}}\"}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "6e45b0c5-ef15-4613-b61e-0a38f6f1f7a5",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\": false, \"message\": \"البريد أو كلمة المرور غير صحيحة\"}",
+        "options": {
+          "responseCode": 401,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7e3957bb-5a48-4394-b3e3-4df17f8e403b",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -1120,
+        1392
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 🔒 Security check\nconst allowedOrigin = 'https://yourwebsite.com';\nconst auth = $input.first().json.headers.authorization;\nconst origin =  'https://yourwebsite.com';\n\n// ✅ فحص الـ Origin\n\nif (origin !== allowedOrigin) {\n  throw new Error(\"❌ Unauthorized Origin: \" + origin);\n}\n\nconst expectedAuth = 'Basic ' + Buffer.from('admin:DashboardSecure2025').toString('base64');\nif (auth !== expectedAuth) {\n  throw new Error('❌ Invalid Authorization');\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        1360
+      ],
+      "id": "e722fb9c-f8a7-4634-9451-7dfa62fefac3",
+      "name": "Security Check2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk",
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sku": "={{ $json.body.sku }}",
+            "name": "={{ $json.body.name }}",
+            "category": "={{ $json.body.category }}",
+            "image": "={{ $json.body.image }}",
+            "price": "={{ $json.body.price }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sku",
+              "displayName": "sku",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "price",
+              "displayName": "price",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "image",
+              "displayName": "image",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -288,
+        1248
+      ],
+      "id": "a49b844c-31bc-4d4a-8f94-ac6d97c80502",
+      "name": "Add Product to Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# ده بيجيب المنتجات في الصفحه الرئيسيه",
+        "height": 224,
+        "width": 720,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1664,
+        -832
+      ],
+      "typeVersion": 1,
+      "id": "05583b7a-76be-40ed-b9df-20497e9eb4e2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# هنا بقا بنخد الاورد من الصفحه الرئيسيه",
+        "height": 224,
+        "width": 864,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        -832
+      ],
+      "typeVersion": 1,
+      "id": "d77bd595-1777-4b32-87e0-78c2b4626b63",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# ده اللوجيك كله",
+        "height": 1328,
+        "width": 2320,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1664,
+        -576
+      ],
+      "typeVersion": 1,
+      "id": "d34084b5-7e86-45a7-be4c-9f8e0bacf14b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# بيجيب الداتا لصفحه الادمن",
+        "height": 352,
+        "width": 688
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1664,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "78a3ff42-5358-4937-bebe-becf9a8a1e8f",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# ببعت رساله للعميل لما بقبل او ارفص في صفحه الادمن",
+        "height": 352,
+        "width": 1600
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -944,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "903fb376-54a5-4fad-a1b3-72afc0f69947",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# بعمل امان لصفحه الادمن",
+        "height": 336,
+        "width": 800,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1648,
+        1184
+      ],
+      "typeVersion": 1,
+      "id": "439e4fc2-202f-476d-ae5c-8ed1703095ff",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# بحفظ الداتا الي جايه من data-entry",
+        "height": 336,
+        "width": 800,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -816,
+        1184
+      ],
+      "typeVersion": 1,
+      "id": "16996dc1-5432-4ca8-9d51-87383271d128",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Security Check\nconst headers = $input.first().json.headers;\nconst auth = headers.authorization;\nconst expectedAuth = \"Basic \" + Buffer.from(\"admin:DashboardSecure2025\").toString(\"base64\");\n\nif (!auth || auth !== expectedAuth) {\n  throw new Error(\"Unauthorized\");\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        1312
+      ],
+      "id": "8f68409e-699a-4fa8-aeb7-d6af5d85e5b9",
+      "name": "Security Check3"
+    },
+    {
+      "parameters": {
+        "path": "get-category",
+        "responseMode": "lastNode",
+        "responseData": "allEntries",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        1312
+      ],
+      "id": "18f96eed-5978-4bf7-a922-4255ad9c751b",
+      "name": "Webhook - Get Category",
+      "webhookId": "6fa4f85d-d4bb-457f-b0de-333da5c25196"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. استخراج جميع قيم 'category' من المدخلات في مصفوفة واحدة\nconst allCategories = items.map(item => item.json.category);\n// -> ['حبوب', 'زيوت', 'حلويات', 'حبوب', 'بقوليات', ...]\n\n// 2. استخدام Set لإزالة العناصر المكررة، ثم تحويلها مرة أخرى إلى مصفوفة\nconst uniqueCategories = [...new Set(allCategories)];\n// -> ['حبوب', 'زيوت', 'حلويات', 'بقوليات', 'معلبات', 'بص']\n\n// 3. تنسيق الخرج ليكون متوافقاً مع الكود الأمامي (frontend)\n// كل فئة ستكون في كائن منفصل\nreturn uniqueCategories.map(categoryName => {\n  return {\n    json: {\n      category: categoryName\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        1312
+      ],
+      "id": "16167392-8cb5-4885-beaf-9774db018490",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk",
+          "mode": "list",
+          "cachedResultName": "Products",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1x8CaHb4RErCFfsmDKQj0o8B7XH6pcquK475RnPTFFIk/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        1312
+      ],
+      "id": "39477fdb-9381-45bc-916d-18fce70c74ab",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "L6WaV6OABTWjvmIV",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "add-product",
+        "options": {
+          "allowedOrigins": "*",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -736,
+        1248
+      ],
+      "id": "d102550c-4be2-463e-9e89-75c7ceaf6ee2",
+      "name": "Webhook - Add Product",
+      "webhookId": "47579913-79a1-4243-8cf5-f47d16a99cf1"
+    },
+    {
+      "parameters": {
+        "content": "# بيجيب كل Category من الداتا",
+        "height": 336,
+        "width": 960,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        16,
+        1184
+      ],
+      "typeVersion": 1,
+      "id": "76508abb-321a-4c1f-a017-d2a17a0481d7",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {
+    "Webhook - Get Orders": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "91.134.8.101, 172.71.126.56",
+            "x-real-ip": "172.71.126.56",
+            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
+            "user-agent": "PostmanRuntime/7.48.0",
+            "accept-encoding": "gzip, br",
+            "postman-token": "794d9aa6-827a-4170-a6ae-fd8a8904c178",
+            "cf-ray": "989dacfdde6dd114-CDG",
+            "accept": "*/*",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "91.134.8.101",
+            "cf-ipcountry": "FR",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {},
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/get-orders",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Webhook - Update Order": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "91.134.8.101, 172.71.119.21",
+            "x-real-ip": "172.71.119.21",
+            "content-length": "94",
+            "sec-fetch-dest": "empty",
+            "referer": "http://127.0.0.1:5500/",
+            "priority": "u=1, i",
+            "accept-language": "ar-EG,ar-AE;q=0.9,ar;q=0.8,en-US;q=0.7,en;q=0.6",
+            "cf-ray": "989e62fe9cae697c-CDG",
+            "accept-encoding": "gzip, br",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*",
+            "origin": "http://127.0.0.1:5500",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-mode": "cors",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "91.134.8.101",
+            "cf-ipcountry": "FR",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "orderId": "n1mg82sm4",
+            "status": "Rejected",
+            "deliveryTime": null,
+            "rejectReason": "DDDDDDDDDDDDD"
+          },
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/update-order",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Webhook - Admin Login": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "91.134.8.101, 104.23.225.176",
+            "x-real-ip": "104.23.225.176",
+            "content-length": "51",
+            "sec-fetch-dest": "empty",
+            "referer": "http://127.0.0.1:5500/",
+            "priority": "u=1, i",
+            "accept-language": "ar-EG,ar-AE;q=0.9,ar;q=0.8,en-US;q=0.7,en;q=0.6",
+            "cf-ray": "98a4c72dda20248e-CDG",
+            "accept-encoding": "gzip, br",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*",
+            "origin": "http://127.0.0.1:5500",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-mode": "cors",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "91.134.8.101",
+            "cf-ipcountry": "FR",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "email": "admin@store.com",
+            "password": "Admin@2025"
+          },
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/admin-login",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Webhook - Get Category": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "57.129.28.212, 162.158.86.102",
+            "x-real-ip": "162.158.86.102",
+            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
+            "user-agent": "PostmanRuntime/7.48.0",
+            "accept-encoding": "gzip, br",
+            "postman-token": "0513fd65-8356-4f21-bb7f-b4ce2e6d0d4d",
+            "cf-ray": "98d84e36c84f9b46-FRA",
+            "accept": "*/*",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "57.129.28.212",
+            "cf-ipcountry": "DE",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {},
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/get-category",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Webhook - Add Product": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "57.129.25.20, 104.23.239.33",
+            "x-real-ip": "104.23.239.33",
+            "content-length": "145",
+            "sec-fetch-dest": "empty",
+            "referer": "http://127.0.0.1:5500/",
+            "priority": "u=1, i",
+            "accept-language": "ar-EG,ar-AE;q=0.9,ar;q=0.8,en-US;q=0.7,en;q=0.6",
+            "cf-ray": "98cf1e2bff32098f-FRA",
+            "accept-encoding": "gzip, br",
+            "sec-ch-ua-platform": "\"Android\"",
+            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
+            "user-agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36",
+            "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?1",
+            "accept": "*/*",
+            "origin": "http://127.0.0.1:5500",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-mode": "cors",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "57.129.25.20",
+            "cf-ipcountry": "DE",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "sku": "9366922309",
+            "name": "3123few",
+            "category": "ewqe",
+            "price": 2,
+            "image": "https://n8n.abdallav2ray.ggff.net/webhook-test/add-product",
+            "notes": ""
+          },
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/add-product",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Code in JavaScript": [
+      {
+        "json": {
+          "category": "حبوب"
+        }
+      },
+      {
+        "json": {
+          "category": "زيوت"
+        }
+      },
+      {
+        "json": {
+          "category": "حلويات"
+        }
+      },
+      {
+        "json": {
+          "category": "بقوليات"
+        }
+      },
+      {
+        "json": {
+          "category": "معلبات"
+        }
+      },
+      {
+        "json": {
+          "category": "بص"
+        }
+      }
+    ],
+    "Webhook - New Order1": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "57.129.28.212, 172.70.250.217",
+            "x-real-ip": "172.70.250.217",
+            "content-length": "861",
+            "sec-fetch-dest": "empty",
+            "referer": "http://127.0.0.1:5500/",
+            "priority": "u=1, i",
+            "accept-language": "ar-EG,ar-AE;q=0.9,ar;q=0.8,en-US;q=0.7,en;q=0.6",
+            "cf-ray": "98de246e8f199174-FRA",
+            "accept-encoding": "gzip, br",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "authorization": "Basic Y2xpZW50OkFiZGFsbGFzdXBlcjIwMjVzYW15c3VwZXI=",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*",
+            "origin": "http://127.0.0.1:5500",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-mode": "cors",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "57.129.28.212",
+            "cf-ipcountry": "DE",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "orderId": "cm1ktbw2n",
+            "date": "2025-10-13T10:27:02.573Z",
+            "formattedDate": "13/10/2025 1:27 PM",
+            "customer": {
+              "name": "Abdalla Nassar",
+              "phone": "01091603971",
+              "addressInput": "egypt",
+              "location": {
+                "type": "Point",
+                "coordinates": {
+                  "latitude": 50.1109221,
+                  "longitude": 8.6821267,
+                  "formatted": "50.110922, 8.682127"
+                },
+                "accuracy": {
+                  "horizontal_meters": 9174.256422628441,
+                  "altitude_meters": null,
+                  "altitude_accuracy_meters": null
+                },
+                "motion": {
+                  "heading_degrees": null,
+                  "speed_kmh": null
+                },
+                "address": "egypt",
+                "timestamp": 1760351222576,
+                "device_info": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+              }
+            },
+            "items": [
+              {
+                "sku": "2",
+                "name": "زيت دوار الشمس 1 لتر",
+                "price": 45,
+                "qty": 1
+              },
+              {
+                "sku": "1",
+                "name": "أرز أبيض 1 كيلو",
+                "price": 25,
+                "qty": 2
+              },
+              {
+                "sku": "5",
+                "name": "عدس أحمر 500 جرام",
+                "price": 18,
+                "qty": 1
+              }
+            ],
+            "total": 113
+          },
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/order",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Main Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main Switch2": {
+      "main": [
+        [
+          {
+            "node": "Get Accept OrderID3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Reject OrderID2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Time Data3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Time Data3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Time Data3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Reject Reason3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Accept Order Status": {
+      "main": [
+        [
+          {
+            "node": "Accept Status Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accept Status Check": {
+      "main": [
+        [
+          {
+            "node": "Ask Delivery Time3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Already Processed Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Accept OrderID3": {
+      "main": [
+        [
+          {
+            "node": "Check Accept Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Reject Order Status": {
+      "main": [
+        [
+          {
+            "node": "Reject Status Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reject Status Check": {
+      "main": [
+        [
+          {
+            "node": "Ask Reject Reason2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Already Processed Reject Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Reject OrderID2": {
+      "main": [
+        [
+          {
+            "node": "Check Reject Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ask Reject Reason2": {
+      "main": [
+        []
+      ]
+    },
+    "Check Time Order Status": {
+      "main": [
+        [
+          {
+            "node": "Merge Time Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Time Data": {
+      "main": [
+        [
+          {
+            "node": "Update Accepted Order3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Accepted WhatsApp Message1": {
+      "main": [
+        [
+          {
+            "node": "Send Accepted to Customer2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Time Data3": {
+      "main": [
+        [
+          {
+            "node": "Check Time Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Accepted Order3": {
+      "main": [
+        [
+          {
+            "node": "Confirm Accepted3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Accepted3": {
+      "main": [
+        [
+          {
+            "node": "Lookup Accepted Order Data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Accepted Order Data2": {
+      "main": [
+        [
+          {
+            "node": "Format Accepted WhatsApp Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Reject Reason Order Status": {
+      "main": [
+        [
+          {
+            "node": "Reject Reason Status Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reject Reason Status Check": {
+      "main": [
+        [
+          {
+            "node": "Merge Reject Reason",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Already Processed Reason Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Reject Reason": {
+      "main": [
+        [
+          {
+            "node": "Update Rejected Order3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Reject Reason3": {
+      "main": [
+        [
+          {
+            "node": "Check Reject Reason Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Rejected Order3": {
+      "main": [
+        [
+          {
+            "node": "Confirm Rejected3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirm Rejected3": {
+      "main": [
+        [
+          {
+            "node": "Lookup Rejected Order Data2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Rejected Order Data2": {
+      "main": [
+        [
+          {
+            "node": "Send Rejected to Customer2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security Check": {
+      "main": [
+        [
+          {
+            "node": "Add to Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - New Order1": {
+      "main": [
+        [
+          {
+            "node": "Security Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send Order to Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security Check Products": {
+      "main": [
+        [
+          {
+            "node": "Get Products from Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Get Products1": {
+      "main": [
+        [
+          {
+            "node": "Security Check Products",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Get Orders": {
+      "main": [
+        [
+          {
+            "node": "Security Check1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Update Order": {
+      "main": [
+        [
+          {
+            "node": "Security Check Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security Check Update": {
+      "main": [
+        [
+          {
+            "node": "Update Order Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security Check1": {
+      "main": [
+        [
+          {
+            "node": "Get All Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Orders": {
+      "main": [
+        []
+      ]
+    },
+    "Update Order Status": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Check Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Status": {
+      "main": [
+        [
+          {
+            "node": "Format Accepted WhatsApp Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Rejected to Customer4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Accepted WhatsApp Message": {
+      "main": [
+        [
+          {
+            "node": "Send Accepted to Customer4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Admin Login": {
+      "main": [
+        [
+          {
+            "node": "Check Credentials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Credentials": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security Check2": {
+      "main": [
+        [
+          {
+            "node": "Add Product to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Product to Sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook - Get Category": {
+      "main": [
+        [
+          {
+            "node": "Security Check3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security Check3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Add Product": {
+      "main": [
+        [
+          {
+            "node": "Security Check2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "ef2071ed-3599-468a-acd3-553404d4b29d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "387fb254b53ba7bfd2fb46c69526828ed16630d6f254ed527757c1cf51725d28"
+  },
+  "id": "rQmNBBJu2svdbDlK",
+  "tags": []
+}
