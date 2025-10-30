@@ -1677,13 +1677,13 @@
         "resource": "messages-api",
         "instanceName": "test",
         "remoteJid": "=966{{ $json.Phone }}@s.whatsapp.net",
-        "messageText": "=✅ تم قبول طلبك بنجاح!\n\nمرحباً *{{ $json.CustomerName }}* 👋\n\n📦 *رقم الطلب:* {{ $json.OrderID }}\n⏰ *وقت التوصيل المتوقع:* {{ $json.DeliveryTime }}\n\n🛒 *تفاصيل طلبك:*\n{{ $json.itemsList }}\n\n💰 *الإجمالي:* {{ $json.total }} ريال\n\n✨ شكراً لثقتك بنا!\nسيتم التواصل معك قريباً لتأكيد التوصيل.",
+        "messageText": "=📦 *تفاصيل الطلب*  \n━━━━━━━━━━━━━━━\n👤 *الاسم:* {{ $json.CustomerName }}\n📞 *الهاتف:* {{$json.Phone}}\n📍 *العنوان:* {{$json.Address}}\n━━━━━━━━━━━━━━━\n\n🧾 *المنتجات:*  \n{{ $json.itemsList }}\n━━━━━━━━━━━━━━━\n💰 *الإجمالي الكلي:* {{$json.Total}} ريال  \n🕒 *وقت التسليم:* {{$json.DeliveryTime}}  \n\n✨ شكراً لثقتك بنا!\nسيتم التواصل معك قريباً لتأكيد التوصيل.",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api-english.evolutionApi",
       "typeVersion": 1,
       "position": [
-        480,
+        432,
         784
       ],
       "id": "78625dfa-1997-4a21-b2d0-19dd6afb9316",
@@ -1761,7 +1761,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const orderItems = JSON.parse($json.OrderJSON);\n\nconst itemsList = orderItems.map(item => `- ${item.name} x${item.qty} = ${item.price * item.qty} ريال`).join(\"\\n\");\n\nreturn [\n  {\n    json: {\n      ...$json,\n      itemsList,\n      total: $json.Total\n    }\n  }\n];"
+        "jsCode": "const orderItems = JSON.parse($json.OrderJSON);\n\n// تنسيق شكل عرض المنتجات\nconst itemsList = orderItems.map((item, index) => \n  `${index + 1}️⃣ ${item.name}  |  📦 الكمية: ${item.qty}  |  💰 السعر: ${item.price * item.qty} ريال`\n).join(\"\\n\");\n\n// الرسالة الكاملة (اختياري لو حابب تستخدمها)\nconst message = `📦 *تفاصيل الطلب*  \n━━━━━━━━━━━━━━━\n👤 الاسم: ${$json.CustomerName}\n📞 الهاتف: ${$json.Phone}\n📍 العنوان: ${$json.Address}\n\n🧾 *المنتجات:*  \n${itemsList}\n\n━━━━━━━━━━━━━━━\n💰 *الإجمالي الكلي:* ${$json.Total} ريال  \n🕒 وقت التسليم: ${$json.DeliveryTime}  \n`;\n\nreturn [\n  {\n    json: {\n      ...$json,\n      itemsList,\n      message\n    }\n  }\n];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -2259,50 +2259,6 @@
         }
       }
     ],
-    "Webhook - Update Order": [
-      {
-        "json": {
-          "headers": {
-            "host": "n8n.abdallav2ray.ggff.net",
-            "x-forwarded-scheme": "https",
-            "x-forwarded-proto": "https",
-            "x-forwarded-for": "91.134.8.101, 172.71.119.21",
-            "x-real-ip": "172.71.119.21",
-            "content-length": "94",
-            "sec-fetch-dest": "empty",
-            "referer": "http://127.0.0.1:5500/",
-            "priority": "u=1, i",
-            "accept-language": "ar-EG,ar-AE;q=0.9,ar;q=0.8,en-US;q=0.7,en;q=0.6",
-            "cf-ray": "989e62fe9cae697c-CDG",
-            "accept-encoding": "gzip, br",
-            "sec-ch-ua-platform": "\"Windows\"",
-            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-            "sec-ch-ua": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\"",
-            "content-type": "application/json",
-            "sec-ch-ua-mobile": "?0",
-            "accept": "*/*",
-            "origin": "http://127.0.0.1:5500",
-            "sec-fetch-site": "cross-site",
-            "sec-fetch-mode": "cors",
-            "cdn-loop": "cloudflare; loops=1",
-            "cf-connecting-ip": "91.134.8.101",
-            "cf-ipcountry": "FR",
-            "cf-visitor": "{\"scheme\":\"https\"}"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "orderId": "n1mg82sm4",
-            "status": "Rejected",
-            "deliveryTime": null,
-            "rejectReason": "DDDDDDDDDDDDD"
-          },
-          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/update-order",
-          "executionMode": "test"
-        }
-      }
-    ],
     "Webhook - Admin Login": [
       {
         "json": {
@@ -2536,6 +2492,50 @@
             "total": 113
           },
           "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/order",
+          "executionMode": "test"
+        }
+      }
+    ],
+    "Webhook - Update Order": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.abdallav2ray.ggff.net",
+            "x-forwarded-scheme": "https",
+            "x-forwarded-proto": "https",
+            "x-forwarded-for": "57.129.64.199, 162.158.86.102",
+            "x-real-ip": "162.158.86.102",
+            "content-length": "92",
+            "sec-fetch-dest": "empty",
+            "referer": "http://127.0.0.1:5500/",
+            "priority": "u=1, i",
+            "accept-language": "ar-EG,ar-AE;q=0.9,ar;q=0.8,en-US;q=0.7,en;q=0.6",
+            "cf-ray": "9969d66d29269960-FRA",
+            "accept-encoding": "gzip, br",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "authorization": "Basic YWRtaW46RGFzaGJvYXJkU2VjdXJlMjAyNQ==",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+            "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+            "content-type": "application/json",
+            "sec-ch-ua-mobile": "?0",
+            "accept": "*/*",
+            "origin": "http://127.0.0.1:5500",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-mode": "cors",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "57.129.64.199",
+            "cf-ipcountry": "DE",
+            "cf-visitor": "{\"scheme\":\"https\"}"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "orderId": "76unk8ec4",
+            "status": "Accepted",
+            "deliveryTime": "30 دقيقة",
+            "rejectReason": ""
+          },
+          "webhookUrl": "https://n8n.abdallav2ray.ggff.net/webhook-test/update-order",
           "executionMode": "test"
         }
       }
@@ -3099,7 +3099,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "ef2071ed-3599-468a-acd3-553404d4b29d",
+  "versionId": "2e6d4d2c-a905-4b86-8c55-376ad5079d56",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "387fb254b53ba7bfd2fb46c69526828ed16630d6f254ed527757c1cf51725d28"
