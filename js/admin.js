@@ -205,9 +205,23 @@ function getStatusText(status) {
 function getDeviceFromInfo(deviceInfo) {
   if (!deviceInfo) return "غير معروف";
 
+  // في حال كان كائن، نحوله إلى نص JSON
+  if (typeof deviceInfo !== "string") {
+    try {
+      deviceInfo = JSON.stringify(deviceInfo);
+    } catch (e) {
+      return "غير معروف";
+    }
+  }
+
   const ua = deviceInfo.toLowerCase();
 
-  if (ua.includes("android") || ua.includes("iphone") || ua.includes("ipad") || ua.includes("ipod")) {
+  if (
+    ua.includes("android") ||
+    ua.includes("iphone") ||
+    ua.includes("ipad") ||
+    ua.includes("ipod")
+  ) {
     return "📱 موبايل";
   }
 
